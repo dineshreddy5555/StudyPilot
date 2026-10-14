@@ -20,12 +20,12 @@
     <main>
         <h2>Add a New Subject</h2>
 
-        <!-- Form to add a new subject -->
         <form method="POST" action="{{ url_for('subjects') }}">
             <input
                 type="text"
                 name="name"
                 placeholder="Enter subject name"
+                maxlength="100"
                 required
             >
 
@@ -42,10 +42,5 @@
             {% endfor %}
         </ul>
 
-        <a href="/dashboard" class="back-link">
+        <a href="{{ url_for('dashboard') }}" class="back-link">
             ← Back to Dashboard
-        </a>
-    </main>
-
-</body>
-</html>
