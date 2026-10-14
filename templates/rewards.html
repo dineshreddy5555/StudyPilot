@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StudyPilot Rewards</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .header, .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px #00000010;
+        }
+
+        h1, h2 {
+            margin-top: 0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .stat {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .number {
+            font-size: 30px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .bar {
+            background: #e5e7eb;
+            height: 18px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .fill {
+            height: 100%;
+            background: #6366f1;
+            transition: width 0.3s;
+        }
+
+        .badges {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .badge {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .badge.unlocked {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .badge.locked {
+            opacity: 0.55;
+            background: #f9fafb;
+        }
+
+        .icon {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        a {
+            display: inline-block;
+            padding: 12px 18px;
+            background: #4f46e5;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        a:hover {
+            background: #3730a3;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>🏆 StudyPilot Rewards</h1>
+        <p>Study consistently, complete tasks, and unlock achievements!</p>
+
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('tasks') }}">My Tasks</a>
+        <a href="{{ url_for('progress') }}">My Progress</a>
+    </div>
+
+    <div class="card">
+        <h2>⭐ Your Rewards</h2>
+
+        <div class="stats">
+            <div class="stat">
+                <div>⭐ Total XP</div>
+                <div class="number">{{ xp }}</div>
+                <p>10 XP per completed task</p>
+            </div>
+
+            <div class="stat">
+                <div>🎯 Current Level</div>
+                <div class="number">{{ level }}</div>
+                <p>{{ level_name }}</p>
+            </div>
+
+            <div class="stat">
+                <div>🏅 Next Level</div>
+                <div class="number">{{ xp_to_next_level }}</div>
+                <p>More XP needed for the next level</p>
+            </div>
+        </div>
+
+        <h3>Level {{ level }} Progress</h3>
+
+        <div class="bar">
+            <div class="fill"
+                 style="width: {{ xp_in_level }}%;">
+            </div>
+        </div>
+
+        <p>{{ xp_in_level }} / 100 XP toward the next level</p>
+    </div>
+
+    <div class="card">
+        <h2>🏅 Achievement Badges</h2>
+
+        <p>Unlocked badges:
+            {{ badges | selectattr('unlocked') | list | length }}
+            / {{ badges | length }}
+        </p>
+
+        <div class="badges">
+            {% for badge in badges %}
+            <div class="badge {{ 'unlocked' if badge.unlocked else 'locked' }}">
+
+                <div class="icon">{{ badge.icon }}</div>
+
+                <h3>{{ badge.name }}</h3>
+
+                <p>{{ badge.description }}</p>
+
+                <div class="status">
+                    {% if badge.unlocked %}
+                        ✅ Unlocked!
+                    {% else %}
+                        🔒 Not unlocked yet
+                    {% endif %}
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>💡 How to Earn Rewards</h2>
+
+        <ul>
+            <li>Complete a task to earn 10 XP.</li>
+            <li>Earn 100 XP to advance one level.</li>
+            <li>Complete 5 tasks to unlock Task Starter.</li>
+            <li>Complete 10 tasks to unlock Task Champion.</li>
+            <li>Study on consecutive days to earn streak badges.</li>
+            <li>Complete your daily target to earn Daily Goal Hero.</li>
+        </ul>
+    </div>
+
+</div>
+</body>
+</html>

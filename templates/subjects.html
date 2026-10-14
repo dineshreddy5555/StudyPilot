@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Subjects - Study Pilot</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>📚 My Subjects</h1>
+        <p>Organize your learning journey</p>
+    </header>
+
+    <main>
+        <h2>Add a New Subject</h2>
+
+        <form method="POST" action="/subjects">
+            <input
+                type="text"
+                name="subject"
+                placeholder="Enter subject name"
+                required
+            >
+
+            <button type="submit">Add Subject</button>
+        </form>
+
+        <h2>Your Subjects</h2>
+
+        <ul>
+            {% for subject in subjects %}
+                <li>{{ subject }}</li>
+            {% else %}
+                <li>No subjects added yet.</li>
+            {% endfor %}
+        </ul>
+
+        <a href="/dashboard" class="back-link">
+            ← Back to Dashboard
+        </a>
+    </main>
+
+</body>
+</html>

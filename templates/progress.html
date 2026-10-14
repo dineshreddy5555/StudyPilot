@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StudyPilot - Progress</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 20px;
+            color: #263238;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        h1, h2 {
+            color: #243b67;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .stat {
+            background: #eef3ff;
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat h2 {
+            font-size: 30px;
+            margin: 10px 0;
+        }
+
+        .streak {
+            background: #fff4e5;
+            border-left: 5px solid #ff9800;
+        }
+
+        .goal-card {
+            background: #f0fff6;
+            border-left: 5px solid #36b37e;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 22px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #36b37e;
+            height: 100%;
+            transition: width 0.5s;
+        }
+
+        .goal-form {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .goal-form label {
+            font-weight: bold;
+        }
+
+        .goal-form input {
+            width: 100px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .goal-form button {
+            padding: 11px 16px;
+            background: #3155a4;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .goal-form button:hover {
+            background: #243b67;
+        }
+
+        /* Calendar */
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header button {
+            background: #3155a4;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .calendar-header button:hover {
+            background: #243b67;
+        }
+
+        #monthYear {
+            text-align: center;
+            margin: 0;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .weekday {
+            text-align: center;
+            font-weight: bold;
+            padding: 8px 0;
+            color: #555;
+        }
+
+        .day {
+            min-height: 65px;
+            padding: 8px 4px;
+            border-radius: 9px;
+            background: #f0f2f5;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .day-number {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .studied {
+            background: #b7efc5;
+            color: #155724;
+            border: 1px solid #72d58d;
+        }
+
+        .today {
+            outline: 2px solid #3155a4;
+            outline-offset: -2px;
+        }
+
+        .empty-day {
+            background: transparent;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-box {
+            width: 15px;
+            height: 15px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .green-box {
+            background: #b7efc5;
+            border: 1px solid #72d58d;
+        }
+
+        .gray-box {
+            background: #f0f2f5;
+            border: 1px solid #ddd;
+        }
+
+        .today-box {
+            background: white;
+            border: 2px solid #3155a4;
+        }
+
+        .back-link {
+            display: inline-block;
+            background: #3155a4;
+            color: white;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .back-link:hover {
+            background: #243b67;
+        }
+
+        @media (max-width: 500px) {
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .calendar-grid {
+                gap: 4px;
+            }
+
+            .day {
+                min-height: 48px;
+                padding: 6px 1px;
+                font-size: 12px;
+            }
+
+            .calendar-header button {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📊 Your Study Progress</h1>
+
+    <p>
+        Track your learning, celebrate your achievements,
+        and build a consistent study habit.
+    </p>
+
+    <!-- Overall Statistics -->
+    <div class="card">
+        <div class="stats">
+
+            <div class="stat">
+                <p>Total Tasks</p>
+                <h2>{{ total }}</h2>
+            </div>
+
+            <div class="stat">
+                <p>Completed</p>
+                <h2>{{ completed }}</h2>
+            </div>
+
+            <div class="stat">
+                <p>Pending</p>
+                <h2>{{ pending }}</h2>
+            </div>
+
+            <div class="stat">
+                <p>Completion</p>
+                <h2>{{ percentage }}%</h2>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Study Streak -->
+    <div class="card streak">
+        <h2>🔥 Study Streak</h2>
+
+        <h3>{{ streak }} consecutive day(s)</h3>
+
+        <p>{{ streak_message }}</p>
+    </div>
+
+    <!-- Overall Progress -->
+    <div class="card">
+        <h2>📚 Overall Task Progress</h2>
+
+        <div class="progress-bar">
+            <div
+                class="progress-fill"
+                style="width: {{ percentage }}%;">
+            </div>
+        </div>
+
+        <p>{{ percentage }}% of your tasks completed.</p>
+
+        <p>{{ message }}</p>
+    </div>
+
+    <!-- Daily Study Goal -->
+    <div class="card goal-card">
+
+        <h2>🎯 Daily Study Goal</h2>
+
+        <p>
+            Completed today:
+            <strong>{{ today_completed }}</strong>
+            out of
+            <strong>{{ daily_target }}</strong> tasks.
+        </p>
+
+        <div
+            class="progress-bar"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="{{ daily_goal_percentage }}">
+
+            <div
+                class="progress-fill"
+                style="width: {{ daily_goal_percentage }}%;">
+            </div>
+
+        </div>
+
+        <p>
+            <strong>{{ daily_goal_percentage }}%</strong>
+            of your daily goal completed.
+        </p>
+
+        <h3>{{ daily_goal_message }}</h3>
+
+        <form
+            class="goal-form"
+            method="POST"
+            action="{{ url_for('progress') }}">
+
+            <label for="daily_target">
+                Set your daily target:
+            </label>
+
+            <input
+                type="number"
+                id="daily_target"
+                name="daily_target"
+                min="1"
+                max="100"
+                value="{{ daily_target }}"
+                required>
+
+            <button type="submit">
+                Save Daily Goal
+            </button>
+
+        </form>
+
+        <p>Choose a target between 1 and 100 completed tasks per day.</p>
+
+    </div>
+
+    <!-- Study Streak Calendar -->
+    <div class="card">
+
+        <h2>📅 Study Streak Calendar</h2>
+
+        <p>
+            Green days indicate that you completed at least one task.
+            Your calendar uses recorded task-completion dates.
+        </p>
+
+        <div class="calendar-header">
+
+            <button
+                id="previousMonth"
+                type="button"
+                aria-label="Previous month">
+                &#10094;
+            </button>
+
+            <h2 id="monthYear"></h2>
+
+            <button
+                id="nextMonth"
+                type="button"
+                aria-label="Next month">
+                &#10095;
+            </button>
+
+        </div>
+
+        <div class="calendar-grid" id="calendar">
+
+            <div class="weekday">Sun</div>
+            <div class="weekday">Mon</div>
+            <div class="weekday">Tue</div>
+            <div class="weekday">Wed</div>
+            <div class="weekday">Thu</div>
+            <div class="weekday">Fri</div>
+            <div class="weekday">Sat</div>
+
+        </div>
+
+        <div class="legend">
+
+            <span>
+                <span class="legend-box green-box"></span>
+                Studied
+            </span>
+
+            <span>
+                <span class="legend-box gray-box"></span>
+                No recorded study
+            </span>
+
+            <span>
+                <span class="legend-box today-box"></span>
+                Today
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- Weekly Study Chart -->
+    <div class="card">
+
+        <h2>📈 Weekly Study Activity</h2>
+
+        <p>Number of tasks completed during the last seven days.</p>
+
+        <canvas id="weeklyStudyChart"></canvas>
+
+    </div>
+
+    <a
+        href="{{ url_for('dashboard') }}"
+        class="back-link">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+<!-- Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Weekly chart data from Flask.
+    const chartLabels = {{ chart_labels | tojson }};
+    const chartValues = {{ chart_values | tojson }};
+
+    const chartCanvas = document.getElementById("weeklyStudyChart");
+
+    if (typeof Chart !== "undefined") {
+
+        new Chart(chartCanvas, {
+            type: "bar",
+
+            data: {
+                labels: chartLabels,
+
+                datasets: [{
+                    label: "Tasks Completed",
+                    data: chartValues,
+                    backgroundColor: "#36b37e",
+                    borderRadius: 6,
+                    maxBarThickness: 45
+                }]
+            },
+
+            options: {
+                responsive: true,
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+
+                        ticks: {
+                            precision: 0
+                        },
+
+                        title: {
+                            display: true,
+                            text: "Completed Tasks"
+                        }
+                    }
+                },
+
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+    } else {
+
+        chartCanvas.insertAdjacentHTML(
+            "afterend",
+            "<p>Weekly chart requires an internet connection.</p>"
+        );
+
+    }
+
+    // Calendar setup.
+    const calendar = document.getElementById("calendar");
+    const monthYear = document.getElementById("monthYear");
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let displayedYear = today.getFullYear();
+    let displayedMonth = today.getMonth();
+
+    // Study dates provided by Flask.
+    const studiedDates = new Set(
+        {{ studied_dates | default([]) | tojson }}
+    );
+
+    function renderCalendar(year, month) {
+
+        // Keep the weekday headings and remove old dates.
+        while (calendar.children.length > 7) {
+            calendar.removeChild(calendar.lastChild);
+        }
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        monthYear.textContent = new Date(year, month, 1)
+            .toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric"
+            });
+
+        // Empty cells before the first day.
+        for (let i = 0; i < firstDay; i++) {
+
+            const blank = document.createElement("div");
+
+            blank.className = "day empty-day";
+            blank.setAttribute("aria-hidden", "true");
+
+            calendar.appendChild(blank);
+        }
+
+        // Create each date.
+        for (let day = 1; day <= daysInMonth; day++) {
+
+            const cell = document.createElement("div");
+            cell.className = "day";
+
+            const dateKey =
+                year + "-" +
+                String(month + 1).padStart(2, "0") + "-" +
+                String(day).padStart(2, "0");
+
+            const number = document.createElement("span");
+
+            number.className = "day-number";
+            number.textContent = day;
+
+            cell.appendChild(number);
+
+            if (studiedDates.has(dateKey)) {
+
+                cell.classList.add("studied");
+                cell.title = "Task completed on " + dateKey;
+
+            } else {
+
+                cell.title = "No recorded completed task on " + dateKey;
+
+            }
+
+            const currentDate = new Date(year, month, day);
+
+            if (currentDate.getTime() === today.getTime()) {
+                cell.classList.add("today");
+            }
+
+            calendar.appendChild(cell);
+        }
+    }
+
+    // Previous month.
+    document
+        .getElementById("previousMonth")
+        .addEventListener("click", function () {
+
+            displayedMonth--;
+
+            if (displayedMonth < 0) {
+                displayedMonth = 11;
+                displayedYear--;
+            }
+
+            renderCalendar(displayedYear, displayedMonth);
+        });
+
+    // Next month.
+    document
+        .getElementById("nextMonth")
+        .addEventListener("click", function () {
+
+            displayedMonth++;
+
+            if (displayedMonth > 11) {
+                displayedMonth = 0;
+                displayedYear++;
+            }
+
+            renderCalendar(displayedYear, displayedMonth);
+        });
+
+    // Display the current month.
+    renderCalendar(displayedYear, displayedMonth);
+</script>
+
+</body>
+</html>

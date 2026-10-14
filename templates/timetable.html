@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Study Timetable - Study Pilot</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>📅 Study Timetable</h1>
+        <p>Plan your learning schedule</p>
+    </header>
+
+    <main>
+        <h2>Add Study Session</h2>
+
+        <form method="POST" action="/timetable">
+
+            <input
+                type="text"
+                name="subject"
+                placeholder="Enter subject name"
+                required
+            >
+
+            <label for="study_date">Date:</label>
+            <input
+                type="date"
+                id="study_date"
+                name="study_date"
+                required
+            >
+
+            <label for="study_time">Time:</label>
+            <input
+                type="time"
+                id="study_time"
+                name="study_time"
+                required
+            >
+
+            <button type="submit">Add Session</button>
+
+        </form>
+
+        <h2>Your Study Schedule</h2>
+
+        {% if sessions %}
+            {% for session in sessions %}
+                <div class="card">
+                    <h3>{{ session.subject }}</h3>
+                    <p>Date: {{ session.date }}</p>
+                    <p>Time: {{ session.time }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No study sessions added yet.</p>
+        {% endif %}
+
+        <a href="/dashboard" class="back-link">
+            ← Back to Dashboard
+        </a>
+
+    </main>
+
+</body>
+</html>

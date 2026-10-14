@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Welcome to StudyPilot</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .welcome-container {
+            max-width: 850px;
+            width: 100%;
+            text-align: center;
+            padding: 50px 30px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .logo {
+            font-size: 65px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        h1 span {
+            color: #64d8ff;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #dce8f5;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 35px 0;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 22px 12px;
+            border-radius: 15px;
+        }
+
+        .feature h3 {
+            margin: 10px 0;
+            color: #8de5ff;
+        }
+
+        .feature p {
+            color: #e0e8f0;
+            line-height: 1.5;
+        }
+
+        .feature-icon {
+            font-size: 35px;
+        }
+
+        .start-button {
+            display: inline-block;
+            padding: 16px 35px;
+            background: #64d8ff;
+            color: #14213d;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 30px;
+            transition: 0.3s;
+        }
+
+        .start-button:hover {
+            background: white;
+            transform: translateY(-3px);
+        }
+
+        footer {
+            margin-top: 30px;
+            color: #c4d2e0;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 34px;
+            }
+
+            .subtitle {
+                font-size: 17px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="welcome-container">
+
+        <div class="logo">🎓</div>
+
+        <h1>Welcome to <span>StudyPilot</span></h1>
+
+        <p class="subtitle">
+            Your journey to smarter learning starts here!<br>
+            Plan your studies, learn Python, track your progress,
+            and achieve your academic goals.
+        </p>
+
+        <div class="features">
+
+            <div class="feature">
+                <div class="feature-icon">📚</div>
+                <h3>Manage Subjects</h3>
+                <p>Organize your college subjects in one place.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🐍</div>
+                <h3>Learn Python</h3>
+                <p>Explore beginner lessons and practice coding.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">📅</div>
+                <h3>Plan Your Day</h3>
+                <p>Create study schedules and daily tasks.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🏆</div>
+                <h3>Track Progress</h3>
+                <p>Complete tasks, earn XP, and unlock badges.</p>
+            </div>
+
+        </div>
+
+        <a href="{{ url_for('dashboard') }}" class="start-button">
+            Start Learning 🚀
+        </a>
+
+        <footer>
+            <p>StudyPilot © 2026 | Learn • Plan • Achieve</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

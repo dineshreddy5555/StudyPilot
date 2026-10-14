@@ -1,0 +1,211 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4ff;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+header {
+    background-color: #4f46e5;
+    color: white;
+    text-align: center;
+    padding: 30px;
+}
+
+header h1 {
+    font-size: 36px;
+}
+
+main {
+    text-align: center;
+    margin: 60px auto;
+    padding: 30px;
+}
+
+main h2 {
+    color: #4f46e5;
+    font-size: 28px;
+}
+
+main p {
+    font-size: 18px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+}
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px;
+    max-width: 900px;
+    margin: 35px auto;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px #dddddd;
+}
+
+.card h3 {
+    color: #4f46e5;
+    margin-bottom: 15px;
+}
+
+.card p {
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+button {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #3730a3;
+}
+
+.back-link {
+    display: inline-block;
+    margin: 20px;
+    color: #4f46e5;
+    text-decoration: none;
+}
+
+@media (max-width: 600px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+        padding: 15px;
+    }
+}
+form {
+    margin: 25px 0;
+}
+
+input {
+    padding: 12px;
+    width: 250px;
+    max-width: 80%;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin: 5px;
+}
+
+button {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #3730a3;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background: white;
+    padding: 15px;
+    margin: 10px auto;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px #ddd;
+}
+.task-card {
+    max-width: 650px;
+    margin: 15px auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.task-card form {
+    margin: 0;
+}
+
+.delete-btn {
+    background-color: #dc2626;
+}
+
+.delete-btn:hover {
+    background-color: #991b1b;
+}
+
+del {
+    color: #777;
+}
+.progress-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.progress-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.progress-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px #ddd;
+}
+
+.progress-card h3 {
+    color: #4f46e5;
+}
+
+.number {
+    font-size: 36px;
+    font-weight: bold;
+    color: #3730a3;
+}
+
+.progress-bar {
+    background: #ddd;
+    height: 30px;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 25px 0;
+}
+
+.progress-fill {
+    background: #4f46e5;
+    color: white;
+    height: 100%;
+    line-height: 30px;
+    min-width: 0;
+    transition: width 0.4s;
+}
+
+.progress-message {
+    margin: 25px 0;
+    font-size: 18px;
+}
+
+@media (max-width: 600px) {
+    .progress-grid {
+        grid-template-columns: 1fr;
+    }
+}

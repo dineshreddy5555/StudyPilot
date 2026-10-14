@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Daily Tasks - Study Pilot</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>✅ Daily Tasks</h1>
+        <p>Complete your tasks and achieve your goals!</p>
+    </header>
+
+    <main>
+        <h2>Add a New Task</h2>
+
+        <form method="POST" action="/tasks">
+            <input
+                type="text"
+                name="task"
+                placeholder="Enter your study task"
+                maxlength="150"
+                required
+            >
+
+            <button type="submit">Add Task</button>
+        </form>
+
+        <h2>My Tasks</h2>
+
+        {% if tasks %}
+            {% for task in tasks %}
+                <div class="card task-card">
+
+                    <span>
+                        {% if task.completed %}
+                            ✅ <del>{{ task.name }}</del>
+                            <strong>Completed</strong>
+                        {% else %}
+                            📘 {{ task.name }}
+                            <strong>Pending</strong>
+                        {% endif %}
+                    </span>
+
+                    {% if not task.completed %}
+                        <form method="POST"
+                              action="/tasks/complete/{{ task.id }}">
+                            <button type="submit">
+                                Mark Completed
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    <form method="POST"
+                          action="/tasks/delete/{{ task.id }}">
+                        <button type="submit" class="delete-btn">
+                            Delete
+                        </button>
+                    </form>
+
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No tasks yet. Add your first study task!</p>
+        {% endif %}
+
+        <a href="/dashboard" class="back-link">
+            ← Back to Dashboard
+        </a>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyPilot Courses</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <h1>📚 StudyPilot Courses</h1>
+        <p>Learn programming one step at a time.</p>
+
+        <div class="card">
+            <h2>🐍 Python Basics</h2>
+            <p>Learn Python from the beginning with 14 lessons and practice exercises.</p>
+            <a class="btn" href="{{ url_for('python_course') }}">Start Learning</a>
+        </div>
+
+        <p><a href="{{ url_for('dashboard') }}">← Back to Dashboard</a></p>
+    </main>
+</body>
+</html>

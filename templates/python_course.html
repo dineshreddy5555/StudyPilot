@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Basics - StudyPilot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <h1>🐍 Python Basics</h1>
+        <p>Learn Python through examples and exercises.</p>
+
+        <h3>Course Progress</h3>
+        <p>{{ completed_count }} of {{ total_lessons }} lessons completed</p>
+
+        <progress value="{{ percentage }}" max="100"></progress>
+        <p>{{ percentage }}% complete</p>
+
+        {% if completed_count == total_lessons %}
+            <h2>🎉 Congratulations! You completed the course!</h2>
+        {% endif %}
+
+        <hr>
+
+        {% for lesson in lessons %}
+            <div class="card">
+                <h3>
+                    Lesson {{ lesson.id }}: {{ lesson.title }}
+                    {% if lesson.id in completed_ids %}
+                        ✅
+                    {% endif %}
+                </h3>
+
+                <p>{{ lesson.description }}</p>
+                <p>⏱️ {{ lesson.duration }}</p>
+
+                <a class="btn"
+                   href="{{ url_for('python_lesson', lesson_id=lesson.id) }}">
+                    {% if lesson.id in completed_ids %}
+                        Review Lesson
+                    {% else %}
+                        Start Lesson
+                    {% endif %}
+                </a>
+            </div>
+        {% endfor %}
+
+        <p><a href="{{ url_for('courses') }}">← All Courses</a></p>
+        <p><a href="{{ url_for('dashboard') }}">← Dashboard</a></p>
+    </main>
+</body>
+</html>

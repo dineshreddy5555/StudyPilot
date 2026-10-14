@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StudyPilot - Your Learning Companion</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>🎓 StudyPilot</h1>
+        <p>Your Learning Journey Starts Here!</p>
+    </header>
+
+    <main>
+        <h2>Welcome to StudyPilot!</h2>
+
+        <p>Plan your studies, manage your subjects, and achieve your goals.</p>
+
+        <a href="{{ url_for('dashboard') }}" class="get-started-btn">
+            Get Started →
+        </a>
+    </main>
+
+    <footer>
+        <p>StudyPilot &copy; 2026 | Your Personal Study Companion</p>
+    </footer>
+
+</body>
+</html>

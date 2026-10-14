@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ lesson.title }} - StudyPilot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <h1>Lesson {{ lesson.id }}: {{ lesson.title }}</h1>
+
+        <p>{{ lesson.description }}</p>
+        <p>⏱️ {{ lesson.duration }}</p>
+
+        <h2>💻 Example Code</h2>
+        <pre><code>{{ lesson.code }}</code></pre>
+
+        <h2>📝 Practice Exercise</h2>
+        <p>{{ lesson.exercise }}</p>
+
+        {% if is_completed %}
+            <p>✅ You have completed this lesson!</p>
+        {% else %}
+            <form method="POST"
+                  action="{{ url_for('complete_python_lesson', lesson_id=lesson.id) }}">
+                <button class="btn" type="submit">
+                    Mark Lesson as Completed
+                </button>
+            </form>
+        {% endif %}
+
+        <p>
+            <a href="{{ url_for('python_course') }}">← Back to Python Course</a>
+        </p>
+    </main>
+</body>
+</html>
