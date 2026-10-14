@@ -1,46 +1,43 @@
 # 🎓 StudyPilot
 
-## 📌 About the Project
-StudyPilot is a web-based application designed to help students organize their studies and manage their academic activities efficiently.
+### Your Smart Study Companion
+
+StudyPilot is a student-focused web application designed to help students organize their studies and manage their academic activities.
+
+---
+
+## 📸 Project Screenshot
+
+<!-- Replace the image path below with your actual uploaded screenshot filename. -->
+
+![StudyPilot Screenshot](YOUR_IMAGE_FILENAME.png)
+
+---
 
 ## ✨ Features
-- Student-friendly dashboard
-- Simple and easy-to-use interface
-- Organized study information
-- Helps students manage their academic activities
+
+- 📚 Study organization
+- 📊 Student dashboard
+- 🎯 User-friendly interface
+- 🗂️ Organized academic information
+
+*Update this list to match the features implemented in your project.*
+
+---
 
 ## 🛠️ Technologies Used
+
 - Python
 - Flask
 - HTML
 - CSS
 - JavaScript
 
-## ⚙️ Installation and Setup
+---
 
-1. Clone this repository:
+## 💻 Installation and Setup
 
-   git clone https://github.com/dineshreddy5555/StudyPilot.git
+### 1. Clone the Repository
 
-2. Open the project folder.
-
-3. Install the required dependencies:
-
-   pip install -r requirements.txt
-
-4. Run the application:
-
-   python app.py
-
-5. Open your browser and visit:
-
-   http://127.0.0.1:5000
-
-## 👩‍💻 Author
-StudyPilot Project
-
-## 📄 License
-This project is for educational purposes.
-## 📸 Project Screenshot
-
-![StudyPilot Home Page](studypilot-home.png)
+```bash
+git clone https://github.com/dineshreddy5555/StudyPilot.git
