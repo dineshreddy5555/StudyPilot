@@ -41,3 +41,6 @@ StudyPilot Project
 
 ## 📄 License
 This project is for educational purposes.
+## 📸 Project Screenshot
+
+![StudyPilot Home Page](studypilot-home.png)
