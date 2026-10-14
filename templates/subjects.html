@@ -20,10 +20,11 @@
     <main>
         <h2>Add a New Subject</h2>
 
-        <form method="POST" action="/subjects">
+        <!-- Form to add a new subject -->
+        <form method="POST" action="{{ url_for('subjects') }}">
             <input
                 type="text"
-                name="subject"
+                name="name"
                 placeholder="Enter subject name"
                 required
             >
@@ -35,7 +36,7 @@
 
         <ul>
             {% for subject in subjects %}
-                <li>{{ subject }}</li>
+                <li>{{ subject["name"] }}</li>
             {% else %}
                 <li>No subjects added yet.</li>
             {% endfor %}
