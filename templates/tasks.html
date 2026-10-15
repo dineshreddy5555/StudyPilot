@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Daily Tasks - Study Pilot</title>
+    <title>Daily Tasks - StudyPilot</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
@@ -18,59 +18,86 @@
     </header>
 
     <main>
+
         <h2>Add a New Task</h2>
 
-        <form method="POST" action="/tasks">
+        <!-- Form to add a new task -->
+        <form method="POST" action="{{ url_for('tasks') }}">
+
             <input
                 type="text"
-                name="task"
+                name="name"
                 placeholder="Enter your study task"
                 maxlength="150"
                 required
             >
 
             <button type="submit">Add Task</button>
+
         </form>
 
         <h2>My Tasks</h2>
 
+        <!-- Display all tasks -->
         {% if tasks %}
+
             {% for task in tasks %}
+
                 <div class="card task-card">
 
                     <span>
-                        {% if task.completed %}
-                            ✅ <del>{{ task.name }}</del>
+
+                        {% if task['completed'] %}
+
+                            ✅ <del>{{ task['name'] }}</del>
                             <strong>Completed</strong>
+
                         {% else %}
-                            📘 {{ task.name }}
+
+                            📘 {{ task['name'] }}
                             <strong>Pending</strong>
+
                         {% endif %}
+
                     </span>
 
-                    {% if not task.completed %}
+                    <!-- Mark task as completed -->
+                    {% if not task['completed'] %}
+
                         <form method="POST"
-                              action="/tasks/complete/{{ task.id }}">
+                              action="{{ url_for('complete_task', task_id=task['id']) }}">
+
                             <button type="submit">
                                 Mark Completed
                             </button>
+
                         </form>
+
                     {% endif %}
 
+                    <!-- Delete task -->
                     <form method="POST"
-                          action="/tasks/delete/{{ task.id }}">
+                          action="{{ url_for('delete_task', task_id=task['id']) }}">
+
                         <button type="submit" class="delete-btn">
                             Delete
                         </button>
+
                     </form>
 
                 </div>
+
             {% endfor %}
+
         {% else %}
+
             <p>No tasks yet. Add your first study task!</p>
+
         {% endif %}
 
-        <a href="/dashboard" class="back-link">
+        <br>
+
+        <a href="{{ url_for('dashboard') }}" class="back-link">
             ← Back to Dashboard
         </a>
 

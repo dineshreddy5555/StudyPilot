@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>My Subjects - Study Pilot</title>
+    <title>My Subjects - StudyPilot</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
@@ -14,33 +14,66 @@
 
     <header>
         <h1>📚 My Subjects</h1>
-        <p>Organize your learning journey</p>
+        <p>Organize your college subjects!</p>
     </header>
 
     <main>
+
         <h2>Add a New Subject</h2>
 
+        <!-- Form to add a subject -->
         <form method="POST" action="{{ url_for('subjects') }}">
+
             <input
                 type="text"
                 name="name"
-                placeholder="Enter subject name"
+                placeholder="Enter your subject name"
                 maxlength="100"
                 required
             >
 
-            <button type="submit">Add Subject</button>
+            <button type="submit">➕ Add Subject</button>
+
         </form>
 
-        <h2>Your Subjects</h2>
+        <h2>My Subjects</h2>
 
-        <ul>
+        <!-- Display the saved subjects -->
+        {% if subjects %}
+
             {% for subject in subjects %}
-                <li>{{ subject["name"] }}</li>
-            {% else %}
-                <li>No subjects added yet.</li>
+
+                <div class="card">
+
+                    <h3>📘 {{ subject['name'] }}</h3>
+
+                    <!-- Delete subject -->
+                    <form method="POST"
+                          action="{{ url_for('delete_subject', subject_id=subject['id']) }}">
+
+                        <button type="submit" class="delete-btn">
+                            🗑️ Delete Subject
+                        </button>
+
+                    </form>
+
+                </div>
+
             {% endfor %}
-        </ul>
+
+        {% else %}
+
+            <p>No subjects added yet. Add your first subject!</p>
+
+        {% endif %}
+
+        <br>
 
         <a href="{{ url_for('dashboard') }}" class="back-link">
             ← Back to Dashboard
+        </a>
+
+    </main>
+
+</body>
+</html>

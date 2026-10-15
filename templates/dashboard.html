@@ -1,85 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyPilot | Smart Student Dashboard</title>
 
-    <title>StudyPilot Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f7fb;
+            color: #333;
+        }
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+        header {
+            background: #2563eb;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        nav {
+            background: white;
+            padding: 18px;
+            text-align: center;
+            box-shadow: 0 2px 8px #ddd;
+        }
+
+        nav a {
+            display: inline-block;
+            color: #2563eb;
+            text-decoration: none;
+            margin: 8px 12px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #7c3aed;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 35px auto;
+            padding: 20px;
+        }
+
+        .welcome {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 12px #ddd;
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            color: #2563eb;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px #ddd;
+            text-align: center;
+        }
+
+        .card h3 {
+            color: #2563eb;
+        }
+
+        .card a {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .card a:hover {
+            background: #1d4ed8;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+    </style>
 </head>
 
 <body>
 
     <header>
-        <h1>🎓 StudyPilot Dashboard</h1>
-        <p>Your personal study planner</p>
+        <h1>📚 StudyPilot</h1>
+        <p>Your Smart Student Dashboard</p>
     </header>
 
-    <main>
-        <h2>Welcome, Student! 👋</h2>
-        <p>Choose an option to manage your studies or learn something new.</p>
+    <nav>
+        <a href="{{ url_for('dashboard') }}">🏠 Dashboard</a>
+        <a href="{{ url_for('subjects') }}">📖 My Subjects</a>
+        <a href="{{ url_for('timetable') }}">📅 Timetable</a>
+        <a href="{{ url_for('tasks') }}">✅ Daily Tasks</a>
+        <a href="{{ url_for('progress') }}">📈 Progress</a>
+        <a href="{{ url_for('rewards') }}">🏆 Rewards</a>
+        <a href="{{ url_for('courses') }}">🎓 Courses</a>
+    </nav>
 
-        <div class="dashboard">
+    <div class="container">
+
+        <div class="welcome">
+            <h2>Welcome to StudyPilot! 👋</h2>
+            <p>Organize your studies, manage your daily tasks, and achieve your learning goals.</p>
+        </div>
+
+        <div class="cards">
 
             <div class="card">
-                <h3>📚 My Subjects</h3>
-                <p>Add and manage your college subjects.</p>
-                <a href="{{ url_for('subjects') }}" class="btn">
-                    View Subjects
-                </a>
+                <h3>📖 My Subjects</h3>
+                <p>Manage your subjects and organize your learning.</p>
+                <a href="{{ url_for('subjects') }}">Open Subjects</a>
             </div>
 
             <div class="card">
                 <h3>📅 Study Timetable</h3>
-                <p>Plan your daily study schedule.</p>
-                <a href="{{ url_for('timetable') }}" class="btn">
-                    View Timetable
-                </a>
+                <p>Plan your study sessions and manage your time.</p>
+                <a href="{{ url_for('timetable') }}">Open Timetable</a>
             </div>
 
             <div class="card">
                 <h3>✅ Daily Tasks</h3>
-                <p>Add, complete, and delete study tasks.</p>
-                <a href="{{ url_for('tasks') }}" class="btn">
-                    View Tasks
-                </a>
+                <p>Add tasks and track your daily study activities.</p>
+                <a href="{{ url_for('tasks') }}">Open Tasks</a>
             </div>
 
             <div class="card">
-                <h3>📊 Progress Tracker</h3>
-                <p>Check your completed and pending tasks.</p>
-                <a href="{{ url_for('progress') }}" class="btn">
-                    View Progress
-                </a>
+                <h3>📈 My Progress</h3>
+                <p>Check your study progress and daily goals.</p>
+                <a href="{{ url_for('progress') }}">View Progress</a>
             </div>
 
             <div class="card">
-                <h3>🏆 Study Rewards</h3>
-                <p>Earn XP, level up, and unlock achievement badges!</p>
-                <a href="{{ url_for('rewards') }}" class="btn">
-                    View Rewards
-                </a>
+                <h3>🏆 Rewards</h3>
+                <p>Track your achievements and learning rewards.</p>
+                <a href="{{ url_for('rewards') }}">View Rewards</a>
             </div>
 
-            <!-- NEW PYTHON COURSE CARD -->
             <div class="card">
-                <h3>🐍 Python Programming</h3>
-                <p>Learn Python from the basics with lessons, code examples, and practice exercises.</p>
-                <a href="{{ url_for('courses') }}" class="btn">
-                    Start Learning Python
-                </a>
+                <h3>🎓 Courses</h3>
+                <p>Explore lessons and improve your skills.</p>
+                <a href="{{ url_for('courses') }}">Explore Courses</a>
             </div>
 
         </div>
-    </main>
+    </div>
 
     <footer>
-        <p>© 2026 StudyPilot | Learn, Plan, Achieve 🚀</p>
+        StudyPilot © 2026 | Learn Every Day, Grow Every Day 🚀
     </footer>
 
 </body>
-
 </html>

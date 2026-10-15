@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, abort
 from datetime import date, timedelta
+
 from database import get_connection, create_tables
 from python_course_data import PYTHON_LESSONS
 
@@ -9,184 +10,294 @@ app = Flask(__name__)
 create_tables()
 
 
-# ---------------- COURSE DATABASE ----------------
+# ==========================================
+# PYTHON COURSE PROGRESS TABLE
+# ==========================================
 
 def create_course_tables():
     connection = get_connection()
-
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS course_progress (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            course_name TEXT NOT NULL,
-            lesson_id INTEGER NOT NULL,
-            completed INTEGER NOT NULL DEFAULT 0,
-            completed_at TEXT,
-            UNIQUE(course_name, lesson_id)
-        )
-    """)
-
-    connection.commit()
-    connection.close()
+    try:
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS course_progress (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                course_name TEXT NOT NULL,
+                lesson_id INTEGER NOT NULL,
+                completed INTEGER NOT NULL DEFAULT 0,
+                completed_at TEXT,
+                UNIQUE(course_name, lesson_id)
+            )
+        """)
+        connection.commit()
+    finally:
+        connection.close()
 
 
 create_course_tables()
 
 
-# ---------------- HOME ----------------
+# ==========================================
+# HOME PAGE
+# ==========================================
 
 @app.route("/")
 def home():
     return render_template("welcome.html")
 
 
+# ==========================================
+# SMART DASHBOARD
+# ==========================================
+
 @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+    connection = get_connection()
+
+    try:
+        total_subjects = connection.execute(
+            "SELECT COUNT(*) AS count FROM subjects"
+        ).fetchone()["count"]
+
+        total_tasks = connection.execute(
+            "SELECT COUNT(*) AS count FROM tasks"
+        ).fetchone()["count"]
+
+        completed_tasks = connection.execute(
+            "SELECT COUNT(*) AS count FROM tasks WHERE completed = 1"
+        ).fetchone()["count"]
+
+        pending_tasks = total_tasks - completed_tasks
+
+        completion_percentage = (
+            int(completed_tasks / total_tasks * 100)
+            if total_tasks else 0
+        )
+
+        date_rows = connection.execute("""
+            SELECT DISTINCT completed_date
+            FROM tasks
+            WHERE completed = 1
+            AND completed_date IS NOT NULL
+        """).fetchall()
+
+        studied_dates = [
+            row["completed_date"] for row in date_rows
+        ]
+
+    finally:
+        connection.close()
+
+    streak = calculate_study_streak(studied_dates)
+
+    return render_template(
+        "dashboard.html",
+        total_subjects=total_subjects,
+        total_tasks=total_tasks,
+        completed_tasks=completed_tasks,
+        pending_tasks=pending_tasks,
+        completion_percentage=completion_percentage,
+        streak=streak
+    )
 
 
-# ---------------- SUBJECTS ----------------
+# ==========================================
+# SUBJECTS
+# ==========================================
 
 @app.route("/subjects", methods=["GET", "POST"])
 def subjects():
     connection = get_connection()
 
-    if request.method == "POST":
-        name = request.form.get("name", "").strip()
+    try:
+        if request.method == "POST":
+            name = request.form.get("name", "").strip()
 
-        if name:
-            connection.execute(
-                "INSERT INTO subjects (name) VALUES (?)",
-                (name,)
-            )
-            connection.commit()
+            if name:
+                connection.execute(
+                    "INSERT INTO subjects (name) VALUES (?)",
+                    (name,)
+                )
+                connection.commit()
 
+            return redirect(url_for("subjects"))
+
+        all_subjects = connection.execute(
+            "SELECT * FROM subjects ORDER BY id DESC"
+        ).fetchall()
+
+    finally:
         connection.close()
-        return redirect(url_for("subjects"))
 
-    all_subjects = connection.execute(
-        "SELECT * FROM subjects ORDER BY id DESC"
-    ).fetchall()
-
-    connection.close()
-
-    return render_template("subjects.html", subjects=all_subjects)
+    return render_template(
+        "subjects.html",
+        subjects=all_subjects
+    )
 
 
-# ---------------- TIMETABLE ----------------
+# Delete a subject
+@app.route(
+    "/subjects/delete/<int:subject_id>",
+    methods=["POST"]
+)
+def delete_subject(subject_id):
+    connection = get_connection()
+
+    try:
+        connection.execute(
+            "DELETE FROM subjects WHERE id = ?",
+            (subject_id,)
+        )
+        connection.commit()
+
+    finally:
+        connection.close()
+
+    return redirect(url_for("subjects"))
+
+
+# ==========================================
+# STUDY TIMETABLE
+# ==========================================
 
 @app.route("/timetable", methods=["GET", "POST"])
 def timetable():
     connection = get_connection()
 
-    if request.method == "POST":
-        subject = request.form.get("subject", "").strip()
-        study_date = request.form.get("study_date", "")
-        study_time = request.form.get("study_time", "")
+    try:
+        if request.method == "POST":
+            subject = request.form.get("subject", "").strip()
+            study_date = request.form.get("study_date", "").strip()
+            study_time = request.form.get("study_time", "").strip()
 
-        if subject and study_date and study_time:
-            connection.execute("""
-                INSERT INTO sessions (subject, study_date, study_time)
-                VALUES (?, ?, ?)
-            """, (subject, study_date, study_time))
+            if subject and study_date and study_time:
+                connection.execute("""
+                    INSERT INTO sessions
+                    (subject, study_date, study_time)
+                    VALUES (?, ?, ?)
+                """, (subject, study_date, study_time))
 
-            connection.commit()
+                connection.commit()
 
+            return redirect(url_for("timetable"))
+
+        sessions = connection.execute("""
+            SELECT *
+            FROM sessions
+            ORDER BY study_date, study_time
+        """).fetchall()
+
+    finally:
         connection.close()
-        return redirect(url_for("timetable"))
 
-    sessions = connection.execute("""
-        SELECT * FROM sessions
-        ORDER BY study_date, study_time
-    """).fetchall()
-
-    connection.close()
-
-    return render_template("timetable.html", sessions=sessions)
+    return render_template(
+        "timetable.html",
+        sessions=sessions
+    )
 
 
-# ---------------- TASKS ----------------
+# ==========================================
+# DAILY TASKS
+# ==========================================
 
 @app.route("/tasks", methods=["GET", "POST"])
 def tasks():
     connection = get_connection()
 
-    if request.method == "POST":
-        name = request.form.get("name", "").strip()
+    try:
+        if request.method == "POST":
+            name = request.form.get("name", "").strip()
 
-        if name:
-            connection.execute(
-                "INSERT INTO tasks (name) VALUES (?)",
-                (name,)
-            )
-            connection.commit()
+            if name:
+                connection.execute(
+                    "INSERT INTO tasks (name) VALUES (?)",
+                    (name,)
+                )
+                connection.commit()
 
+            return redirect(url_for("tasks"))
+
+        all_tasks = connection.execute("""
+            SELECT *
+            FROM tasks
+            ORDER BY completed ASC, id DESC
+        """).fetchall()
+
+    finally:
         connection.close()
-        return redirect(url_for("tasks"))
 
-    all_tasks = connection.execute("""
-        SELECT * FROM tasks
-        ORDER BY completed ASC, id DESC
-    """).fetchall()
-
-    connection.close()
-
-    return render_template("tasks.html", tasks=all_tasks)
+    return render_template(
+        "tasks.html",
+        tasks=all_tasks
+    )
 
 
-@app.route("/complete/<int:task_id>")
+# Mark task as completed
+@app.route("/complete/<int:task_id>", methods=["POST"])
 def complete_task(task_id):
     connection = get_connection()
 
-    task = connection.execute(
-        "SELECT completed FROM tasks WHERE id = ?",
-        (task_id,)
-    ).fetchone()
+    try:
+        task = connection.execute(
+            "SELECT completed FROM tasks WHERE id = ?",
+            (task_id,)
+        ).fetchone()
 
-    if task and task["completed"] == 0:
-        connection.execute("""
-            UPDATE tasks
-            SET completed = 1, completed_date = ?
-            WHERE id = ?
-        """, (date.today().isoformat(), task_id))
+        if task and task["completed"] == 0:
+            connection.execute("""
+                UPDATE tasks
+                SET completed = 1, completed_date = ?
+                WHERE id = ?
+            """, (date.today().isoformat(), task_id))
 
-        connection.commit()
+            connection.commit()
 
-    connection.close()
+    finally:
+        connection.close()
+
     return redirect(url_for("tasks"))
 
 
-@app.route("/undo/<int:task_id>")
+# Undo task completion
+@app.route("/undo/<int:task_id>", methods=["POST"])
 def undo_task(task_id):
     connection = get_connection()
 
-    connection.execute("""
-        UPDATE tasks
-        SET completed = 0, completed_date = NULL
-        WHERE id = ?
-    """, (task_id,))
+    try:
+        connection.execute("""
+            UPDATE tasks
+            SET completed = 0, completed_date = NULL
+            WHERE id = ?
+        """, (task_id,))
 
-    connection.commit()
-    connection.close()
+        connection.commit()
+
+    finally:
+        connection.close()
 
     return redirect(url_for("tasks"))
 
 
-@app.route("/delete/<int:task_id>")
+# Delete a task
+@app.route("/delete/<int:task_id>", methods=["POST"])
 def delete_task(task_id):
     connection = get_connection()
 
-    connection.execute(
-        "DELETE FROM tasks WHERE id = ?",
-        (task_id,)
-    )
+    try:
+        connection.execute(
+            "DELETE FROM tasks WHERE id = ?",
+            (task_id,)
+        )
 
-    connection.commit()
-    connection.close()
+        connection.commit()
+
+    finally:
+        connection.close()
 
     return redirect(url_for("tasks"))
 
 
-# ---------------- STREAK ----------------
+# ==========================================
+# STUDY STREAK CALCULATION
+# ==========================================
 
 def calculate_study_streak(studied_dates):
     if not studied_dates:
@@ -197,8 +308,10 @@ def calculate_study_streak(studied_dates):
 
     if today.isoformat() in studied:
         current_day = today
+
     elif (today - timedelta(days=1)).isoformat() in studied:
         current_day = today - timedelta(days=1)
+
     else:
         return 0
 
@@ -211,176 +324,186 @@ def calculate_study_streak(studied_dates):
     return streak
 
 
-# ---------------- PROGRESS ----------------
+# ==========================================
+# PROGRESS PAGE
+# ==========================================
 
 @app.route("/progress", methods=["GET", "POST"])
 def progress():
     connection = get_connection()
 
-    if request.method == "POST":
-        try:
-            target = int(request.form.get("daily_target", 3))
+    try:
+        if request.method == "POST":
+            try:
+                target = int(
+                    request.form.get("daily_target", 3)
+                )
 
-            if 1 <= target <= 100:
-                connection.execute("""
-                    UPDATE daily_goals
-                    SET target = ?
-                    WHERE id = 1
-                """, (target,))
+                if 1 <= target <= 100:
+                    connection.execute(
+                        "UPDATE daily_goals SET target = ? WHERE id = 1",
+                        (target,)
+                    )
+                    connection.commit()
 
-                connection.commit()
+            except (ValueError, TypeError):
+                pass
 
-        except ValueError:
-            pass
+            return redirect(url_for("progress"))
 
-        connection.close()
-        return redirect(url_for("progress"))
+        total = connection.execute(
+            "SELECT COUNT(*) AS count FROM tasks"
+        ).fetchone()["count"]
 
-    total = connection.execute(
-        "SELECT COUNT(*) AS count FROM tasks"
-    ).fetchone()["count"]
+        completed = connection.execute(
+            "SELECT COUNT(*) AS count FROM tasks WHERE completed = 1"
+        ).fetchone()["count"]
 
-    completed = connection.execute("""
-        SELECT COUNT(*) AS count
-        FROM tasks
-        WHERE completed = 1
-    """).fetchone()["count"]
+        today = date.today().isoformat()
 
-    today = date.today().isoformat()
-
-    today_completed = connection.execute("""
-        SELECT COUNT(*) AS count
-        FROM tasks
-        WHERE completed = 1 AND completed_date = ?
-    """, (today,)).fetchone()["count"]
-
-    goal_row = connection.execute(
-        "SELECT target FROM daily_goals WHERE id = 1"
-    ).fetchone()
-
-    daily_target = goal_row["target"] if goal_row else 3
-
-    daily_goal_percentage = (
-        min(100, int(today_completed / daily_target * 100))
-        if daily_target else 0
-    )
-
-    remaining_today = max(0, daily_target - today_completed)
-
-    daily_goal_message = (
-        "🎉 Daily goal completed!"
-        if remaining_today == 0
-        else f"Complete {remaining_today} more task(s) to reach today's goal!"
-    )
-
-    date_rows = connection.execute("""
-        SELECT DISTINCT completed_date
-        FROM tasks
-        WHERE completed = 1 AND completed_date IS NOT NULL
-    """).fetchall()
-
-    studied_dates = [row["completed_date"] for row in date_rows]
-    streak = calculate_study_streak(studied_dates)
-
-    # Weekly chart
-    chart_labels = []
-    chart_values = []
-
-    for days_ago in range(6, -1, -1):
-        day = date.today() - timedelta(days=days_ago)
-
-        count = connection.execute("""
+        today_completed = connection.execute("""
             SELECT COUNT(*) AS count
             FROM tasks
             WHERE completed = 1 AND completed_date = ?
-        """, (day.isoformat(),)).fetchone()["count"]
+        """, (today,)).fetchone()["count"]
 
-        chart_labels.append(day.strftime("%a"))
-        chart_values.append(count)
+        goal_row = connection.execute(
+            "SELECT target FROM daily_goals WHERE id = 1"
+        ).fetchone()
 
-    pending = total - completed
-    percentage = int(completed / total * 100) if total else 0
+        daily_target = goal_row["target"] if goal_row else 3
 
-    message = (
-        "Great job! Keep learning!"
-        if percentage >= 75
-        else "Keep going. Every completed task counts!"
-    )
+        daily_goal_percentage = (
+            min(100, int(today_completed / daily_target * 100))
+            if daily_target else 0
+        )
 
-    streak_message = (
-        f"🔥 Your current study streak is {streak} day(s)!"
-        if streak > 0
-        else "Complete a task today to start your study streak!"
-    )
+        remaining_today = max(
+            0, daily_target - today_completed
+        )
 
-    # XP and levels
-    xp = completed * 10
-    level = (xp // 100) + 1
-    xp_in_level = xp % 100
-    xp_to_next_level = 100 - xp_in_level
+        daily_goal_message = (
+            "🎉 Daily goal completed!"
+            if remaining_today == 0
+            else f"Complete {remaining_today} more task(s) to reach today's goal!"
+        )
 
-    if level < 3:
-        level_name = "Beginner"
-    elif level < 6:
-        level_name = "Intermediate"
-    elif level < 10:
-        level_name = "Advanced"
-    else:
-        level_name = "Study Master"
+        date_rows = connection.execute("""
+            SELECT DISTINCT completed_date
+            FROM tasks
+            WHERE completed = 1
+            AND completed_date IS NOT NULL
+        """).fetchall()
 
-    level_percentage = xp_in_level
+        studied_dates = [
+            row["completed_date"] for row in date_rows
+        ]
 
-    # Achievements
-    badges = [
-        {
-            "name": "First Step",
-            "icon": "🌱",
-            "description": "Complete your first task.",
-            "unlocked": completed >= 1
-        },
-        {
-            "name": "Task Starter",
-            "icon": "✅",
-            "description": "Complete 5 tasks.",
-            "unlocked": completed >= 5
-        },
-        {
-            "name": "Task Champion",
-            "icon": "🏆",
-            "description": "Complete 10 tasks.",
-            "unlocked": completed >= 10
-        },
-        {
-            "name": "Task Legend",
-            "icon": "👑",
-            "description": "Complete 25 tasks.",
-            "unlocked": completed >= 25
-        },
-        {
-            "name": "3-Day Streak",
-            "icon": "🔥",
-            "description": "Study for 3 consecutive days.",
-            "unlocked": streak >= 3
-        },
-        {
-            "name": "7-Day Streak",
-            "icon": "⚡",
-            "description": "Study for 7 consecutive days.",
-            "unlocked": streak >= 7
-        },
-        {
-            "name": "Daily Goal Hero",
-            "icon": "🎯",
-            "description": "Complete today's daily goal.",
-            "unlocked": today_completed >= daily_target
-        }
-    ]
+        streak = calculate_study_streak(studied_dates)
 
-    unlocked_badges = sum(
-        1 for badge in badges if badge["unlocked"]
-    )
+        chart_labels = []
+        chart_values = []
 
-    connection.close()
+        for days_ago in range(6, -1, -1):
+            day = date.today() - timedelta(days=days_ago)
+
+            count = connection.execute("""
+                SELECT COUNT(*) AS count
+                FROM tasks
+                WHERE completed = 1 AND completed_date = ?
+            """, (day.isoformat(),)).fetchone()["count"]
+
+            chart_labels.append(day.strftime("%a"))
+            chart_values.append(count)
+
+        pending = total - completed
+
+        percentage = (
+            int(completed / total * 100)
+            if total else 0
+        )
+
+        message = (
+            "Great job! Keep learning!"
+            if percentage >= 75
+            else "Keep going. Every completed task counts!"
+        )
+
+        streak_message = (
+            f"🔥 Your current study streak is {streak} day(s)!"
+            if streak > 0
+            else "Complete a task today to start your study streak!"
+        )
+
+        # XP and levels
+        xp = completed * 10
+        level = (xp // 100) + 1
+        xp_in_level = xp % 100
+        xp_to_next_level = 100 - xp_in_level
+
+        if level < 3:
+            level_name = "Beginner"
+        elif level < 6:
+            level_name = "Intermediate"
+        elif level < 10:
+            level_name = "Advanced"
+        else:
+            level_name = "Study Master"
+
+        level_percentage = xp_in_level
+
+        # Achievement badges
+        badges = [
+            {
+                "name": "First Step",
+                "icon": "🌱",
+                "description": "Complete your first task.",
+                "unlocked": completed >= 1
+            },
+            {
+                "name": "Task Starter",
+                "icon": "✅",
+                "description": "Complete 5 tasks.",
+                "unlocked": completed >= 5
+            },
+            {
+                "name": "Task Champion",
+                "icon": "🏆",
+                "description": "Complete 10 tasks.",
+                "unlocked": completed >= 10
+            },
+            {
+                "name": "Task Legend",
+                "icon": "👑",
+                "description": "Complete 25 tasks.",
+                "unlocked": completed >= 25
+            },
+            {
+                "name": "3-Day Streak",
+                "icon": "🔥",
+                "description": "Study for 3 consecutive days.",
+                "unlocked": streak >= 3
+            },
+            {
+                "name": "7-Day Streak",
+                "icon": "⚡",
+                "description": "Study for 7 consecutive days.",
+                "unlocked": streak >= 7
+            },
+            {
+                "name": "Daily Goal Hero",
+                "icon": "🎯",
+                "description": "Complete today's daily goal.",
+                "unlocked": today_completed >= daily_target
+            }
+        ]
+
+        unlocked_badges = sum(
+            1 for badge in badges if badge["unlocked"]
+        )
+
+    finally:
+        connection.close()
 
     return render_template(
         "progress.html",
@@ -410,42 +533,45 @@ def progress():
     )
 
 
-# ---------------- REWARDS ----------------
+# ==========================================
+# REWARDS PAGE
+# ==========================================
 
 @app.route("/rewards")
 def rewards():
     connection = get_connection()
 
-    completed = connection.execute("""
-        SELECT COUNT(*) AS count
-        FROM tasks
-        WHERE completed = 1
-    """).fetchone()["count"]
+    try:
+        completed = connection.execute(
+            "SELECT COUNT(*) AS count FROM tasks WHERE completed = 1"
+        ).fetchone()["count"]
 
-    studied_dates = [
-        row["completed_date"]
-        for row in connection.execute("""
-            SELECT DISTINCT completed_date
+        studied_dates = [
+            row["completed_date"]
+            for row in connection.execute("""
+                SELECT DISTINCT completed_date
+                FROM tasks
+                WHERE completed = 1
+                AND completed_date IS NOT NULL
+            """).fetchall()
+        ]
+
+        today = date.today().isoformat()
+
+        today_completed = connection.execute("""
+            SELECT COUNT(*) AS count
             FROM tasks
-            WHERE completed = 1 AND completed_date IS NOT NULL
-        """).fetchall()
-    ]
+            WHERE completed = 1 AND completed_date = ?
+        """, (today,)).fetchone()["count"]
 
-    today = date.today().isoformat()
+        goal_row = connection.execute(
+            "SELECT target FROM daily_goals WHERE id = 1"
+        ).fetchone()
 
-    today_completed = connection.execute("""
-        SELECT COUNT(*) AS count
-        FROM tasks
-        WHERE completed = 1 AND completed_date = ?
-    """, (today,)).fetchone()["count"]
+        daily_target = goal_row["target"] if goal_row else 3
 
-    goal_row = connection.execute(
-        "SELECT target FROM daily_goals WHERE id = 1"
-    ).fetchone()
-
-    daily_target = goal_row["target"] if goal_row else 3
-
-    connection.close()
+    finally:
+        connection.close()
 
     xp = completed * 10
     level = (xp // 100) + 1
@@ -519,26 +645,37 @@ def rewards():
     )
 
 
-# ---------------- PYTHON COURSES ----------------
+# ==========================================
+# COURSES PAGE
+# ==========================================
 
 @app.route("/courses")
 def courses():
     return render_template("courses.html")
 
 
+# ==========================================
+# PYTHON COURSE
+# ==========================================
+
 @app.route("/courses/python")
 def python_course():
     connection = get_connection()
 
-    rows = connection.execute("""
-        SELECT lesson_id
-        FROM course_progress
-        WHERE course_name = ? AND completed = 1
-    """, ("Python Basics",)).fetchall()
+    try:
+        rows = connection.execute("""
+            SELECT lesson_id
+            FROM course_progress
+            WHERE course_name = ? AND completed = 1
+        """, ("Python Basics",)).fetchall()
 
-    connection.close()
+    finally:
+        connection.close()
 
-    completed_ids = [row["lesson_id"] for row in rows]
+    completed_ids = [
+        row["lesson_id"] for row in rows
+    ]
+
     completed_count = len(completed_ids)
     total_lessons = len(PYTHON_LESSONS)
 
@@ -557,10 +694,17 @@ def python_course():
     )
 
 
+# ==========================================
+# PYTHON LESSON PAGE
+# ==========================================
+
 @app.route("/courses/python/lesson/<int:lesson_id>")
 def python_lesson(lesson_id):
     lesson = next(
-        (item for item in PYTHON_LESSONS if item["id"] == lesson_id),
+        (
+            item for item in PYTHON_LESSONS
+            if item["id"] == lesson_id
+        ),
         None
     )
 
@@ -569,13 +713,15 @@ def python_lesson(lesson_id):
 
     connection = get_connection()
 
-    row = connection.execute("""
-        SELECT completed
-        FROM course_progress
-        WHERE course_name = ? AND lesson_id = ?
-    """, ("Python Basics", lesson_id)).fetchone()
+    try:
+        row = connection.execute("""
+            SELECT completed
+            FROM course_progress
+            WHERE course_name = ? AND lesson_id = ?
+        """, ("Python Basics", lesson_id)).fetchone()
 
-    connection.close()
+    finally:
+        connection.close()
 
     is_completed = bool(row and row["completed"])
 
@@ -587,13 +733,18 @@ def python_lesson(lesson_id):
     )
 
 
+# ==========================================
+# COMPLETE PYTHON LESSON
+# ==========================================
+
 @app.route(
     "/courses/python/lesson/<int:lesson_id>/complete",
     methods=["POST"]
 )
 def complete_python_lesson(lesson_id):
     lesson_exists = any(
-        item["id"] == lesson_id for item in PYTHON_LESSONS
+        item["id"] == lesson_id
+        for item in PYTHON_LESSONS
     )
 
     if not lesson_exists:
@@ -601,27 +752,32 @@ def complete_python_lesson(lesson_id):
 
     connection = get_connection()
 
-    connection.execute("""
-        INSERT INTO course_progress
-            (course_name, lesson_id, completed, completed_at)
-        VALUES (?, ?, 1, ?)
-        ON CONFLICT(course_name, lesson_id)
-        DO UPDATE SET
-            completed = 1,
-            completed_at = excluded.completed_at
-    """, (
-        "Python Basics",
-        lesson_id,
-        date.today().isoformat()
-    ))
+    try:
+        connection.execute("""
+            INSERT INTO course_progress
+                (course_name, lesson_id, completed, completed_at)
+            VALUES (?, ?, 1, ?)
+            ON CONFLICT(course_name, lesson_id)
+            DO UPDATE SET
+                completed = 1,
+                completed_at = excluded.completed_at
+        """, (
+            "Python Basics",
+            lesson_id,
+            date.today().isoformat()
+        ))
 
-    connection.commit()
-    connection.close()
+        connection.commit()
+
+    finally:
+        connection.close()
 
     return redirect(url_for("python_course"))
 
 
-# ---------------- RUN APPLICATION ----------------
+# ==========================================
+# RUN APPLICATION
+# ==========================================
 
 if __name__ == "__main__":
     app.run(debug=True)
