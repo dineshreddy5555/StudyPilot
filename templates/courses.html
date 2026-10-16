@@ -2,22 +2,111 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyPilot Courses</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <main class="container">
-        <h1>📚 StudyPilot Courses</h1>
-        <p>Learn programming one step at a time.</p>
 
-        <div class="card">
-            <h2>🐍 Python Basics</h2>
-            <p>Learn Python from the beginning with 14 lessons and practice exercises.</p>
-            <a class="btn" href="{{ url_for('python_course') }}">Start Learning</a>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#635bff">
+
+    <title>StudyPilot | Courses</title>
+
+    <!-- Connect CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="sp-dashboard">
+
+    <!-- Navigation -->
+    <header class="sp-navbar">
+
+        <a href="{{ url_for('dashboard') }}" class="sp-brand">
+            <span class="sp-brand-icon">📚</span>
+            <span>Study<span class="sp-brand-highlight">Pilot</span></span>
+        </a>
+
+        <a href="{{ url_for('dashboard') }}" class="sp-home-btn">
+            ← Dashboard
+        </a>
+
+    </header>
+
+
+    <!-- Main Content -->
+    <main class="sp-container">
+
+        <!-- Page Heading -->
+        <section class="sp-section-heading">
+            <span class="sp-eyebrow">YOUR LEARNING JOURNEY</span>
+
+            <h2>Explore Courses 🎓</h2>
+
+            <p>
+                Learn programming one step at a time.
+                Build your skills with structured lessons.
+            </p>
+        </section>
+
+
+        <!-- Course Card -->
+        <section class="sp-feature-grid">
+
+            <article class="sp-feature-card">
+
+                <div class="sp-feature-top">
+
+                    <div class="sp-feature-icon sp-feature-green">
+                        🐍
+                    </div>
+
+                    <span class="sp-feature-number">01</span>
+
+                </div>
+
+                <h3>Python Basics</h3>
+
+                <p>
+                    Start learning Python from the beginning.
+                    Explore 14 lessons, understand programming
+                    concepts, and practise your skills.
+                </p>
+
+                <a class="sp-feature-link"
+                   href="{{ url_for('python_course') }}">
+
+                    Start Learning
+                    <span>→</span>
+
+                </a>
+
+            </article>
+
+        </section>
+
+
+        <!-- Back Button -->
+        <div style="text-align: center; margin: 30px 0;">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="sp-home-btn">
+
+                ← Back to Dashboard
+
+            </a>
+
         </div>
 
-        <p><a href="{{ url_for('dashboard') }}">← Back to Dashboard</a></p>
+
+        <!-- Footer -->
+        <footer class="sp-footer">
+
+            <p>© 2026 StudyPilot</p>
+
+            <span>Learn Every Day · Grow Every Day 🚀</span>
+
+        </footer>
+
     </main>
+
 </body>
 </html>

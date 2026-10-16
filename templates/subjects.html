@@ -1,77 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>My Subjects - StudyPilot</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
+    <meta name="theme-color" content="#635bff">
+
+    <title>StudyPilot | My Subjects</title>
+
+    <!-- Connect the CSS file -->
     <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+          href="{{ url_for('static', filename='style.css') }}?v=3">
+
+    <!-- Page-specific styling -->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body.subjects-page {
+            margin: 0;
+            min-height: 100vh;
+            background: #f7f8fc;
+            color: #202443;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .subjects-navbar {
+            width: 100%;
+            background: #ffffff;
+            border-bottom: 1px solid #e9eaf3;
+            padding: 16px 24px;
+        }
+
+        .subjects-navbar-inner {
+            max-width: 1050px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .subjects-brand {
+            color: #202443;
+            font-size: 23px;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .subjects-brand span {
+            color: #635bff;
+        }
+
+        .subjects-nav-link {
+            display: inline-block;
+            padding: 10px 16px;
+            background: #eeedff;
+            color: #5146e5;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .subjects-container {
+            width: min(100% - 32px, 850px);
+            margin: 40px auto;
+        }
+
+        .subjects-heading {
+            padding: 35px 24px;
+            margin-bottom: 25px;
+            text-align: center;
+            background: linear-gradient(135deg, #eeedff, #ffffff);
+            border: 1px solid #e6e4ff;
+            border-radius: 22px;
+        }
+
+        .subjects-eyebrow {
+            display: inline-block;
+            margin-bottom: 12px;
+            color: #635bff;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .subjects-heading h1 {
+            margin: 0 0 12px;
+            font-size: clamp(28px, 5vw, 38px);
+            line-height: 1.3;
+        }
+
+        .subjects-heading p {
+            max-width: 500px;
+            margin: 0 auto;
+            color: #777d96;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .subjects-panel {
+            padding: 26px;
+            margin-bottom: 24px;
+            background: #ffffff;
+            border: 1px solid #e9eaf3;
+            border-radius: 20px;
+            box-shadow: 0 6px 22px rgba(35, 35, 80, 0.04);
+        }
+
+        .subjects-panel h2 {
+            margin: 0 0 20px;
+            font-size: 21px;
+        }
+
+        .subject-form {
+            display: flex;
+            gap: 12px;
+            align-items: stretch;
+        }
+
+        .subject-form input {
+            flex: 1;
+            width: 100%;
+            min-width: 0;
+            padding: 14px 16px;
+            border: 1px solid #dfe1ee;
+            border-radius: 12px;
+            outline: none;
+            background: #fbfbff;
+            color: #202443;
+            font-size: 15px;
+        }
+
+        .subject-form input:focus {
+            border-color: #635bff;
+            box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.12);
+        }
+
+        .subject-form button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            background: #635bff;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .subject-form button:hover {
+            background: #5146e5;
+        }
+
+        .subjects-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .subject-card {
+            min-width: 0;
+            padding: 20px;
+            background: #ffffff;
+            border: 1px solid #e9eaf3;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(35, 35, 80, 0.035);
+            overflow-wrap: anywhere;
+        }
+
+        .subject-card h3 {
+            margin: 0 0 18px;
+            font-size: 18px;
+        }
+
+        .delete-form {
+            margin: 0;
+        }
+
+        .delete-btn {
+            padding: 10px 14px;
+            border: 1px solid #ffdada;
+            border-radius: 10px;
+            background: #fff1f1;
+            color: #c03939;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: #ffe3e3;
+        }
+
+        .empty-state {
+            padding: 30px 18px;
+            text-align: center;
+            background: #fafaff;
+            border: 1px dashed #d9d8f5;
+            border-radius: 14px;
+        }
+
+        .empty-state .empty-icon {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 38px;
+        }
+
+        .empty-state p {
+            margin: 0;
+            color: #777d96;
+            line-height: 1.7;
+        }
+
+        .subjects-footer {
+            padding: 20px 10px;
+            color: #858aa0;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .subjects-navbar {
+                padding: 14px 16px;
+            }
+
+            .subjects-brand {
+                font-size: 20px;
+            }
+
+            .subjects-nav-link {
+                padding: 9px 11px;
+                font-size: 12px;
+            }
+
+            .subjects-container {
+                width: calc(100% - 24px);
+                margin: 22px auto;
+            }
+
+            .subjects-heading {
+                padding: 28px 18px;
+                border-radius: 17px;
+            }
+
+            .subjects-heading p {
+                font-size: 14px;
+            }
+
+            .subjects-panel {
+                padding: 20px 16px;
+                border-radius: 16px;
+            }
+
+            .subject-form {
+                flex-direction: column;
+            }
+
+            .subject-form input,
+            .subject-form button {
+                width: 100%;
+                min-height: 46px;
+            }
+
+            .subjects-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
-<body>
+<body class="subjects-page">
 
-    <header>
-        <h1>📚 My Subjects</h1>
-        <p>Organize your college subjects!</p>
+    <!-- Navigation -->
+    <header class="subjects-navbar">
+        <div class="subjects-navbar-inner">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="subjects-brand">
+                📚 Study<span>Pilot</span>
+            </a>
+
+            <a href="{{ url_for('dashboard') }}"
+               class="subjects-nav-link">
+                ← Dashboard
+            </a>
+
+        </div>
     </header>
 
-    <main>
 
-        <h2>Add a New Subject</h2>
+    <!-- Main Content -->
+    <main class="subjects-container">
 
-        <!-- Form to add a subject -->
-        <form method="POST" action="{{ url_for('subjects') }}">
+        <!-- Page Heading -->
+        <section class="subjects-heading">
 
-            <input
-                type="text"
-                name="name"
-                placeholder="Enter your subject name"
-                maxlength="100"
-                required
-            >
+            <span class="subjects-eyebrow">
+                YOUR LEARNING SPACE
+            </span>
 
-            <button type="submit">➕ Add Subject</button>
+            <h1>📚 My Subjects</h1>
 
-        </form>
+            <p>
+                Organize your college subjects, keep your learning
+                structured, and stay on track with your studies.
+            </p>
 
-        <h2>My Subjects</h2>
+        </section>
 
-        <!-- Display the saved subjects -->
-        {% if subjects %}
 
-            {% for subject in subjects %}
+        <!-- Add Subject Form -->
+        <section class="subjects-panel">
 
-                <div class="card">
+            <h2>➕ Add a New Subject</h2>
 
-                    <h3>📘 {{ subject['name'] }}</h3>
+            <form method="POST"
+                  action="{{ url_for('subjects') }}"
+                  class="subject-form">
 
-                    <!-- Delete subject -->
-                    <form method="POST"
-                          action="{{ url_for('delete_subject', subject_id=subject['id']) }}">
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Enter your subject name"
+                    maxlength="100"
+                    aria-label="Subject name"
+                    required
+                >
 
-                        <button type="submit" class="delete-btn">
-                            🗑️ Delete Subject
-                        </button>
+                <button type="submit">
+                    + Add Subject
+                </button>
 
-                    </form>
+            </form>
+
+        </section>
+
+
+        <!-- Saved Subjects -->
+        <section class="subjects-panel">
+
+            <h2>📖 My Subjects</h2>
+
+            {% if subjects %}
+
+                <div class="subjects-list">
+
+                    {% for subject in subjects %}
+
+                        <article class="subject-card">
+
+                            <h3>
+                                📘 {{ subject['name'] }}
+                            </h3>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('delete_subject', subject_id=subject['id']) }}"
+                                class="delete-form"
+                                onsubmit="return confirm('Are you sure you want to delete this subject?');">
+
+                                <button
+                                    type="submit"
+                                    class="delete-btn">
+
+                                    🗑️ Delete Subject
+
+                                </button>
+
+                            </form>
+
+                        </article>
+
+                    {% endfor %}
 
                 </div>
 
-            {% endfor %}
+            {% else %}
 
-        {% else %}
+                <div class="empty-state">
 
-            <p>No subjects added yet. Add your first subject!</p>
+                    <span class="empty-icon">📚</span>
 
-        {% endif %}
+                    <p>
+                        No subjects added yet.<br>
+                        Add your first subject to get started!
+                    </p>
 
-        <br>
+                </div>
 
-        <a href="{{ url_for('dashboard') }}" class="back-link">
-            ← Back to Dashboard
-        </a>
+            {% endif %}
+
+        </section>
+
+
+        <!-- Footer -->
+        <footer class="subjects-footer">
+            © 2026 StudyPilot · Learn Every Day · Grow Every Day 🚀
+        </footer>
 
     </main>
 

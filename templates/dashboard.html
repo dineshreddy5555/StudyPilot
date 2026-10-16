@@ -3,169 +3,656 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#635bff">
+    <meta name="description"
+          content="StudyPilot is your personal student productivity dashboard. Manage subjects, plan study sessions, track tasks, and achieve your learning goals.">
+
     <title>StudyPilot | Smart Student Dashboard</title>
 
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        /* Dashboard-specific improvements */
+
+        .sp-dashboard {
+            min-height: 100vh;
+        }
+
+        .sp-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .sp-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .sp-progress-track {
+            width: 100%;
+            height: 8px;
+            margin-top: 12px;
+            overflow: hidden;
+            background: #ececf5;
+            border-radius: 20px;
+        }
+
+        .sp-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #635bff, #9c70f7);
+            border-radius: 20px;
+            transition: width 0.5s ease;
+        }
+
+        .sp-overview {
+            margin-bottom: 38px;
+            padding: 25px;
+            background: #fff;
+            border: 1px solid #ececf5;
+            border-radius: 20px;
+            box-shadow: 0 5px 18px rgba(40, 40, 90, 0.035);
+        }
+
+        .sp-overview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .sp-overview-header h3 {
             margin: 0;
-            background: #f4f7fb;
-            color: #333;
+            font-size: 18px;
         }
 
-        header {
-            background: #2563eb;
-            color: white;
-            padding: 25px;
-            text-align: center;
+        .sp-overview-header span {
+            color: #777d96;
+            font-size: 13px;
         }
 
-        nav {
-            background: white;
-            padding: 18px;
-            text-align: center;
-            box-shadow: 0 2px 8px #ddd;
-        }
-
-        nav a {
-            display: inline-block;
-            color: #2563eb;
-            text-decoration: none;
-            margin: 8px 12px;
-            font-weight: bold;
-        }
-
-        nav a:hover {
-            color: #7c3aed;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 35px auto;
-            padding: 20px;
-        }
-
-        .welcome {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 4px 12px #ddd;
-            margin-bottom: 25px;
-        }
-
-        .welcome h2 {
-            color: #2563eb;
-        }
-
-        .cards {
+        .sp-overview-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 20px;
+            margin-top: 22px;
         }
 
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px #ddd;
-            text-align: center;
+        .sp-overview-item p {
+            margin: 0 0 8px;
+            color: #777d96;
+            font-size: 12px;
         }
 
-        .card h3 {
-            color: #2563eb;
+        .sp-overview-item h3 {
+            margin: 0;
+            font-size: 25px;
+            color: #202443;
         }
 
-        .card a {
-            display: inline-block;
-            background: #2563eb;
-            color: white;
+        .sp-overview-item small {
+            display: block;
+            margin-top: 7px;
+            color: #777d96;
+        }
+
+        .sp-overview-item .sp-progress-track {
+            margin-top: 14px;
+        }
+
+        .sp-hero {
+            min-height: 250px;
+        }
+
+        .sp-feature-card {
+            min-height: 240px;
+        }
+
+        .sp-footer a {
+            color: #635bff;
             text-decoration: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            margin-top: 10px;
         }
 
-        .card a:hover {
-            background: #1d4ed8;
+        .sp-footer a:hover {
+            text-decoration: underline;
         }
 
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #777;
+        @media (max-width: 600px) {
+            .sp-overview-stats {
+                grid-template-columns: 1fr;
+                gap: 22px;
+            }
+
+            .sp-overview {
+                padding: 20px;
+            }
+
+            .sp-feature-card {
+                min-height: auto;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
 
-<body>
+<body class="sp-dashboard">
 
-    <header>
-        <h1>📚 StudyPilot</h1>
-        <p>Your Smart Student Dashboard</p>
+    <!-- =========================
+         TOP NAVIGATION
+    ========================== -->
+    <header class="sp-navbar">
+
+        <a href="{{ url_for('dashboard') }}"
+           class="sp-brand"
+           aria-label="StudyPilot dashboard">
+
+            <span class="sp-brand-icon" aria-hidden="true">📚</span>
+
+            <span>
+                Study<span class="sp-brand-highlight">Pilot</span>
+            </span>
+        </a>
+
+        <div class="sp-nav-actions">
+            <span class="sp-nav-label">STUDENT WORKSPACE</span>
+
+            <a href="{{ url_for('dashboard') }}"
+               class="sp-home-btn">
+                Dashboard ↗
+            </a>
+        </div>
+
     </header>
 
-    <nav>
-        <a href="{{ url_for('dashboard') }}">🏠 Dashboard</a>
-        <a href="{{ url_for('subjects') }}">📖 My Subjects</a>
-        <a href="{{ url_for('timetable') }}">📅 Timetable</a>
-        <a href="{{ url_for('tasks') }}">✅ Daily Tasks</a>
-        <a href="{{ url_for('progress') }}">📈 Progress</a>
-        <a href="{{ url_for('rewards') }}">🏆 Rewards</a>
-        <a href="{{ url_for('courses') }}">🎓 Courses</a>
-    </nav>
 
-    <div class="container">
+    <main class="sp-container">
 
-        <div class="welcome">
-            <h2>Welcome to StudyPilot! 👋</h2>
-            <p>Organize your studies, manage your daily tasks, and achieve your learning goals.</p>
-        </div>
+        <!-- =========================
+             WELCOME HERO
+        ========================== -->
+        <section class="sp-hero">
 
-        <div class="cards">
+            <div class="sp-hero-content">
 
-            <div class="card">
-                <h3>📖 My Subjects</h3>
-                <p>Manage your subjects and organize your learning.</p>
-                <a href="{{ url_for('subjects') }}">Open Subjects</a>
+                <span class="sp-eyebrow">
+                    YOUR PERSONAL LEARNING SPACE
+                </span>
+
+                <h1>
+                    Learn smarter.<br>
+                    Achieve more. ✨
+                </h1>
+
+                <p>
+                    Welcome to StudyPilot! Organize your subjects,
+                    complete your daily tasks, and build consistent
+                    study habits one day at a time.
+                </p>
+
+                <a href="{{ url_for('tasks') }}"
+                   class="sp-primary-btn">
+
+                    Explore your tasks
+                    <span aria-hidden="true">→</span>
+
+                </a>
+
             </div>
 
-            <div class="card">
-                <h3>📅 Study Timetable</h3>
-                <p>Plan your study sessions and manage your time.</p>
-                <a href="{{ url_for('timetable') }}">Open Timetable</a>
+
+            <div class="sp-hero-illustration"
+                 aria-hidden="true">
+
+                <div class="sp-illustration-circle">
+                    <span>🎓</span>
+                </div>
+
+                <div class="sp-floating-icon sp-float-one">
+                    📖
+                </div>
+
+                <div class="sp-floating-icon sp-float-two">
+                    ⭐
+                </div>
+
+                <div class="sp-floating-icon sp-float-three">
+                    🚀
+                </div>
+
             </div>
 
-            <div class="card">
-                <h3>✅ Daily Tasks</h3>
-                <p>Add tasks and track your daily study activities.</p>
-                <a href="{{ url_for('tasks') }}">Open Tasks</a>
+        </section>
+
+
+        <!-- =========================
+             STATISTICS CARDS
+        ========================== -->
+        <section class="sp-stats"
+                 aria-label="Study statistics">
+
+            <!-- Total Subjects -->
+            <article class="sp-stat-card">
+
+                <div class="sp-stat-icon sp-icon-purple"
+                     aria-hidden="true">
+                    📚
+                </div>
+
+                <div>
+                    <p>Total Subjects</p>
+
+                    <h2>{{ total_subjects }}</h2>
+
+                    <span>
+                        Your learning subjects
+                    </span>
+                </div>
+
+            </article>
+
+
+            <!-- Completed Tasks -->
+            <article class="sp-stat-card">
+
+                <div class="sp-stat-icon sp-icon-blue"
+                     aria-hidden="true">
+                    ✅
+                </div>
+
+                <div>
+                    <p>Completed Tasks</p>
+
+                    <h2>{{ completed_tasks }}</h2>
+
+                    <span>
+                        Tasks finished successfully
+                    </span>
+                </div>
+
+            </article>
+
+
+            <!-- Study Streak -->
+            <article class="sp-stat-card">
+
+                <div class="sp-stat-icon sp-icon-green"
+                     aria-hidden="true">
+                    🔥
+                </div>
+
+                <div>
+                    <p>Study Streak</p>
+
+                    <h2>
+                        {{ streak }}
+                        day{% if streak != 1 %}s{% endif %}
+                    </h2>
+
+                    <span>
+                        Keep your learning going
+                    </span>
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =========================
+             TASK OVERVIEW
+        ========================== -->
+        <section class="sp-overview">
+
+            <div class="sp-overview-header">
+
+                <h3>Your Study Overview</h3>
+
+                <span>
+                    Your current learning activity
+                </span>
+
             </div>
 
-            <div class="card">
-                <h3>📈 My Progress</h3>
-                <p>Check your study progress and daily goals.</p>
-                <a href="{{ url_for('progress') }}">View Progress</a>
+
+            <div class="sp-overview-stats">
+
+                <!-- Total Tasks -->
+                <div class="sp-overview-item">
+
+                    <p>Total Tasks</p>
+
+                    <h3>{{ total_tasks }}</h3>
+
+                    <small>
+                        All tasks in your task manager
+                    </small>
+
+                </div>
+
+
+                <!-- Pending Tasks -->
+                <div class="sp-overview-item">
+
+                    <p>Pending Tasks</p>
+
+                    <h3>{{ pending_tasks }}</h3>
+
+                    <small>
+                        Tasks waiting to be completed
+                    </small>
+
+                </div>
+
+
+                <!-- Completion Percentage -->
+                <div class="sp-overview-item">
+
+                    <p>Task Completion</p>
+
+                    <h3>{{ completion_percentage }}%</h3>
+
+                    <div class="sp-progress-track"
+                         role="progressbar"
+                         aria-label="Task completion"
+                         aria-valuemin="0"
+                         aria-valuemax="100"
+                         aria-valuenow="{{ completion_percentage }}">
+
+                        <div class="sp-progress-fill"
+                             style="width: {{ completion_percentage }}%;">
+                        </div>
+
+                    </div>
+
+                    <small>
+                        Overall task completion
+                    </small>
+
+                </div>
+
             </div>
 
-            <div class="card">
-                <h3>🏆 Rewards</h3>
-                <p>Track your achievements and learning rewards.</p>
-                <a href="{{ url_for('rewards') }}">View Rewards</a>
+        </section>
+
+
+        <!-- =========================
+             FEATURE SECTION
+        ========================== -->
+        <section class="sp-section-heading">
+
+            <span class="sp-eyebrow">
+                YOUR LEARNING TOOLS
+            </span>
+
+            <h2>Everything in one place</h2>
+
+            <p>
+                Choose a section and continue working toward your goals.
+            </p>
+
+        </section>
+
+
+        <section class="sp-feature-grid"
+                 aria-label="StudyPilot features">
+
+
+            <!-- SUBJECTS -->
+            <article class="sp-feature-card">
+
+                <div class="sp-feature-top">
+
+                    <div class="sp-feature-icon sp-feature-purple"
+                         aria-hidden="true">
+                        📖
+                    </div>
+
+                    <span class="sp-feature-number">01</span>
+
+                </div>
+
+                <h3>My Subjects</h3>
+
+                <p>
+                    Organize your academic subjects and keep
+                    your learning structured.
+                </p>
+
+                <a href="{{ url_for('subjects') }}"
+                   class="sp-feature-link">
+
+                    Manage subjects
+                    <span aria-hidden="true">→</span>
+
+                </a>
+
+            </article>
+
+
+            <!-- TIMETABLE -->
+            <article class="sp-feature-card">
+
+                <div class="sp-feature-top">
+
+                    <div class="sp-feature-icon sp-feature-blue"
+                         aria-hidden="true">
+                        📅
+                    </div>
+
+                    <span class="sp-feature-number">02</span>
+
+                </div>
+
+                <h3>Study Timetable</h3>
+
+                <p>
+                    Plan study sessions and create a consistent
+                    daily routine.
+                </p>
+
+                <a href="{{ url_for('timetable') }}"
+                   class="sp-feature-link">
+
+                    View timetable
+                    <span aria-hidden="true">→</span>
+
+                </a>
+
+            </article>
+
+
+            <!-- DAILY TASKS -->
+            <article class="sp-feature-card">
+
+                <div class="sp-feature-top">
+
+                    <div class="sp-feature-icon sp-feature-green"
+                         aria-hidden="true">
+                        ✅
+                    </div>
+
+                    <span class="sp-feature-number">03</span>
+
+                </div>
+
+                <h3>Daily Tasks</h3>
+
+                <p>
+                    Track assignments, organize priorities,
+                    and finish your daily tasks.
+                </p>
+
+                <a href="{{ url_for('tasks') }}"
+                   class="sp-feature-link">
+
+                    Manage tasks
+                    <span aria-hidden="true">→</span>
+
+                </a>
+
+            </article>
+
+
+            <!-- PROGRESS -->
+            <article class="sp-feature-card">
+
+                <div class="sp-feature-top">
+
+                    <div class="sp-feature-icon sp-feature-orange"
+                         aria-hidden="true">
+                        📊
+                    </div>
+
+                    <span class="sp-feature-number">04</span>
+
+                </div>
+
+                <h3>My Progress</h3>
+
+                <p>
+                    Review completed tasks, daily goals,
+                    and your study streak.
+                </p>
+
+                <a href="{{ url_for('progress') }}"
+                   class="sp-feature-link">
+
+                    View analytics
+                    <span aria-hidden="true">→</span>
+
+                </a>
+
+            </article>
+
+
+            <!-- REWARDS -->
+            <article class="sp-feature-card">
+
+                <div class="sp-feature-top">
+
+                    <div class="sp-feature-icon sp-feature-pink"
+                         aria-hidden="true">
+                        🏆
+                    </div>
+
+                    <span class="sp-feature-number">05</span>
+
+                </div>
+
+                <h3>Rewards & Achievements</h3>
+
+                <p>
+                    Explore your XP, levels, and unlocked
+                    learning badges.
+                </p>
+
+                <a href="{{ url_for('rewards') }}"
+                   class="sp-feature-link">
+
+                    View rewards
+                    <span aria-hidden="true">→</span>
+
+                </a>
+
+            </article>
+
+
+            <!-- COURSES -->
+            <article class="sp-feature-card">
+
+                <div class="sp-feature-top">
+
+                    <div class="sp-feature-icon sp-feature-cyan"
+                         aria-hidden="true">
+                        🎓
+                    </div>
+
+                    <span class="sp-feature-number">06</span>
+
+                </div>
+
+                <h3>Learning Courses</h3>
+
+                <p>
+                    Explore programming lessons and strengthen
+                    your technical skills.
+                </p>
+
+                <a href="{{ url_for('courses') }}"
+                   class="sp-feature-link">
+
+                    Explore courses
+                    <span aria-hidden="true">→</span>
+
+                </a>
+
+            </article>
+
+
+        </section>
+
+
+        <!-- =========================
+             MOTIVATION BANNER
+        ========================== -->
+        <section class="sp-motivation">
+
+            <div class="sp-motivation-icon"
+                 aria-hidden="true">
+                💡
             </div>
 
-            <div class="card">
-                <h3>🎓 Courses</h3>
-                <p>Explore lessons and improve your skills.</p>
-                <a href="{{ url_for('courses') }}">Explore Courses</a>
+            <div>
+
+                <h3>
+                    Small steps lead to big achievements.
+                </h3>
+
+                <p>
+                    You have {{ pending_tasks }}
+                    pending task{% if pending_tasks != 1 %}s{% endif %}.
+                    Complete one today and keep moving forward!
+                </p>
+
             </div>
 
-        </div>
-    </div>
+            <span class="sp-motivation-star"
+                  aria-hidden="true">
+                ✦
+            </span>
 
-    <footer>
-        StudyPilot © 2026 | Learn Every Day, Grow Every Day 🚀
-    </footer>
+        </section>
+
+
+        <!-- =========================
+             FOOTER
+        ========================== -->
+        <footer class="sp-footer">
+
+            <p>
+                © 2026 StudyPilot. Built for better learning.
+            </p>
+
+            <span>
+                Learn Every Day · Grow Every Day 🚀
+            </span>
+
+        </footer>
+
+    </main>
 
 </body>
 </html>
