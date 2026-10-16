@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ lesson.title }} | Study Pilot</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fc;
+            color: #243047;
+            line-height: 1.7;
+        }
+
+        header {
+            background: #243b80;
+            color: white;
+            padding: 20px;
+        }
+
+        .header-content {
+            max-width: 950px;
+            margin: auto;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        header p {
+            margin-bottom: 0;
+        }
+
+        main {
+            max-width: 950px;
+            margin: 25px auto;
+            padding: 0 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        h2 {
+            color: #243b80;
+            margin-top: 0;
+        }
+
+        .lesson-content {
+            white-space: pre-line;
+            overflow-wrap: anywhere;
+        }
+
+        pre {
+            background: #172033;
+            color: #e4edff;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        code {
+            font-family: Consolas, monospace;
+        }
+
+        .question {
+            border-top: 1px solid #e5e9f2;
+            padding: 15px 0;
+        }
+
+        .option {
+            display: block;
+            background: #f5f7fc;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .option input {
+            margin-right: 8px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 11px 18px;
+            border: none;
+            border-radius: 8px;
+            background: #3155bd;
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            cursor: pointer;
+            margin: 5px 5px 5px 0;
+        }
+
+        .button:hover {
+            background: #243b80;
+        }
+
+        .green {
+            background: #16835d;
+        }
+
+        .green:hover {
+            background: #106847;
+        }
+
+        .navigation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .completed {
+            color: #16835d;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 17px;
+            }
+
+            header h1 {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-content">
+        <h1>📚 Study Pilot</h1>
+        <p>{{ course.name }} · {{ lesson.title }}</p>
+    </div>
+</header>
+
+<main>
+
+    <section class="card">
+        <h2>{{ lesson.title }}</h2>
+
+        <div class="lesson-content">{{ lesson.content }}</div>
+
+        {% if is_completed %}
+            <p class="completed">✓ You have completed this lesson!</p>
+        {% endif %}
+    </section>
+
+    {% if lesson.code %}
+    <section class="card">
+        <h2>💻 Example</h2>
+        <p>Study the example below and understand what each line does.</p>
+        <pre><code>{{ lesson.code }}</code></pre>
+    </section>
+    {% endif %}
+
+    {% if lesson.exercise %}
+    <section class="card">
+        <h2>✍️ Practice Exercise</h2>
+        <div class="lesson-content">{{ lesson.exercise }}</div>
+    </section>
+    {% endif %}
+
+    {% if lesson.quiz %}
+    <section class="card">
+        <h2>🧠 Test Your Knowledge</h2>
+
+        <p>Choose one answer for every question.</p>
+
+        <form method="POST"
+              action="{{ url_for('course_quiz',
+                                course_id=course.id,
+                                lesson_id=lesson.id) }}">
+
+            {% for question in lesson.quiz %}
+            {% set question_index = loop.index0 %}
+            <div class="question">
+                <strong>
+                    {{ loop.index }}. {{ question.question }}
+                </strong>
+
+                {% for option in question.options %}
+                <label class="option">
+                    <input
+                        type="radio"
+                        name="answer_{{ question_index }}"
+                        value="{{ loop.index0 }}"
+                        required>
+                    {{ option }}
+                </label>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button class="button" type="submit">
+                Submit Quiz
+            </button>
+        </form>
+    </section>
+    {% endif %}
+
+    <section class="card">
+        <h2>Lesson Progress</h2>
+
+        {% if not is_completed %}
+        <form method="POST"
+              action="{{ url_for('complete_lesson',
+                                course_id=course.id,
+                                lesson_id=lesson.id) }}">
+            <button class="button green" type="submit">
+                ✓ Mark Lesson as Completed
+            </button>
+        </form>
+        {% endif %}
+
+        <div class="navigation">
+            <a class="button"
+               href="{{ url_for('course_detail',
+                                course_id=course.id) }}">
+                ← Back to Course
+            </a>
+
+            <a class="button"
+               href="{{ url_for('courses') }}">
+                All Courses
+            </a>
+
+            <a class="button"
+               href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

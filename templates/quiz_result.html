@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results - Study Pilot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: white;
+            max-width: 500px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2563eb;
+        }
+
+        .button {
+            display: inline-block;
+            margin: 10px;
+            padding: 12px 20px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Quiz Results</h1>
+
+        <h2>Your Score: {{ score }} / {{ total }}</h2>
+
+        <p>Keep practising to improve your knowledge!</p>
+
+        <a class="button"
+           href="{{ url_for('course_lesson',
+                            course_id=course.id,
+                            lesson_id=lesson.id) }}">
+            Try Again
+        </a>
+
+        <a class="button" href="{{ url_for('courses') }}">
+            Back to Courses
+        </a>
+    </div>
+</body>
+</html>

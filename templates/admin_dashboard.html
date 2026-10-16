@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StudyPilot Admin Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0b1020;
+            color: #f1f5f9;
+        }
+
+        header {
+            background: #151d35;
+            padding: 22px;
+            border-bottom: 1px solid #293653;
+        }
+
+        header h1 {
+            margin: 0;
+            color: #a78bfa;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .subtitle {
+            color: #aab6cc;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+        }
+
+        .card {
+            background: #151d35;
+            padding: 24px;
+            border-radius: 14px;
+            border: 1px solid #293653;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: #7c3aed;
+        }
+
+        .card h3 {
+            color: #aab6cc;
+            font-size: 15px;
+        }
+
+        .number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #a78bfa;
+        }
+
+        .section {
+            background: #151d35;
+            margin-top: 25px;
+            padding: 24px;
+            border-radius: 14px;
+            border: 1px solid #293653;
+        }
+
+        .section h2 {
+            margin-top: 0;
+            color: #f1f5f9;
+        }
+
+        .note {
+            color: #aab6cc;
+            line-height: 1.7;
+        }
+
+        /* Admin quick-action buttons */
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            display: inline-block;
+            padding: 13px 18px;
+            background: #7c3aed;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #6d28d9;
+            transform: translateY(-2px);
+        }
+
+        .secondary-btn {
+            background: #24314f;
+            border: 1px solid #425276;
+        }
+
+        .secondary-btn:hover {
+            background: #334568;
+        }
+
+        footer {
+            text-align: center;
+            color: #8491aa;
+            padding: 25px 15px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin-top: 20px;
+                padding: 0 14px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .section {
+                padding: 18px;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🎓 StudyPilot Admin</h1>
+</header>
+
+<div class="container">
+
+    <h2>Admin Dashboard</h2>
+
+    <p class="subtitle">
+        Welcome to your StudyPilot administration panel.
+        Monitor platform activity and access your management pages.
+    </p>
+
+    <!-- Dashboard statistics -->
+    <div class="cards">
+
+        <div class="card">
+            <h3>👨‍🎓 Total Students</h3>
+            <div class="number">{{ total_students }}</div>
+        </div>
+
+        <div class="card">
+            <h3>🌐 Total Website Visits</h3>
+            <div class="number">{{ total_visits }}</div>
+        </div>
+
+        <div class="card">
+            <h3>📚 Total Courses</h3>
+            <div class="number">{{ total_courses }}</div>
+        </div>
+
+        <div class="card">
+            <h3>📝 Total Assignments</h3>
+            <div class="number">{{ total_assignments }}</div>
+        </div>
+
+    </div>
+
+    <!-- Platform overview -->
+    <div class="section">
+        <h2>📊 Platform Overview</h2>
+
+        <p class="note">
+            Use this dashboard to monitor registered students,
+            website visits, available courses and assignments.
+            More administration features can be added as StudyPilot grows.
+        </p>
+    </div>
+
+    <!-- Admin quick actions -->
+    <div class="section">
+        <h2>⚡ Admin Quick Actions</h2>
+
+        <p class="note">
+            Quickly open the main areas of your StudyPilot website.
+        </p>
+
+        <div class="actions">
+
+            <a href="{{ url_for('subjects') }}" class="action-btn">
+                📚 Manage Subjects
+            </a>
+
+            <a href="{{ url_for('courses') }}" class="action-btn">
+                📖 Manage Courses
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="action-btn">
+    🏠 Main Dashboard
+</a>
+        </div>
+    </div>
+
+
+

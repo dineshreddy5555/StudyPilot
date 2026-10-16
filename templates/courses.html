@@ -2,111 +2,129 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <title>My Courses - Study Pilot</title>
 
-    <meta name="theme-color" content="#635bff">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 20px;
+        }
 
-    <title>StudyPilot | Courses</title>
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
 
-    <!-- Connect CSS -->
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+        h1 {
+            text-align: center;
+            color: #243b67;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .course-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .icon {
+            font-size: 38px;
+        }
+
+        .course-card h2 {
+            color: #243b67;
+            font-size: 21px;
+        }
+
+        .level {
+            color: #287a55;
+            font-weight: bold;
+        }
+
+        .open-button {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 10px 16px;
+            background: #3157c8;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        .open-button:hover {
+            background: #203f9b;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3157c8;
+            text-decoration: none;
+        }
+    </style>
 </head>
 
-<body class="sp-dashboard">
+<body>
+    <div class="container">
 
-    <!-- Navigation -->
-    <header class="sp-navbar">
-
-        <a href="{{ url_for('dashboard') }}" class="sp-brand">
-            <span class="sp-brand-icon">📚</span>
-            <span>Study<span class="sp-brand-highlight">Pilot</span></span>
+        <a class="back-button" href="{{ url_for('dashboard') }}">
+            ← Back to Dashboard
         </a>
 
-        <a href="{{ url_for('dashboard') }}" class="sp-home-btn">
-            ← Dashboard
-        </a>
+        <h1>📚 Study Pilot Courses</h1>
 
-    </header>
+        <p class="subtitle">
+            Choose a course and start learning!
+        </p>
 
+        <div class="course-grid">
 
-    <!-- Main Content -->
-    <main class="sp-container">
+            {% for course in courses %}
 
-        <!-- Page Heading -->
-        <section class="sp-section-heading">
-            <span class="sp-eyebrow">YOUR LEARNING JOURNEY</span>
+            <div class="course-card">
 
-            <h2>Explore Courses 🎓</h2>
-
-            <p>
-                Learn programming one step at a time.
-                Build your skills with structured lessons.
-            </p>
-        </section>
-
-
-        <!-- Course Card -->
-        <section class="sp-feature-grid">
-
-            <article class="sp-feature-card">
-
-                <div class="sp-feature-top">
-
-                    <div class="sp-feature-icon sp-feature-green">
-                        🐍
-                    </div>
-
-                    <span class="sp-feature-number">01</span>
-
+                <div class="icon">
+                    {{ course.icon }}
                 </div>
 
-                <h3>Python Basics</h3>
+                <h2>{{ course.name }}</h2>
 
-                <p>
-                    Start learning Python from the beginning.
-                    Explore 14 lessons, understand programming
-                    concepts, and practise your skills.
+                <p>{{ course.description }}</p>
+
+                <p class="level">
+                    Level: {{ course.level }}
                 </p>
 
-                <a class="sp-feature-link"
-                   href="{{ url_for('python_course') }}">
+                <p>
+                    Lessons: {{ course.lessons | length }}
+                </p>
 
-                    Start Learning
-                    <span>→</span>
-
+                <a class="open-button"
+                   href="{{ url_for('course_detail', course_id=course.id) }}">
+                    Open Course →
                 </a>
 
-            </article>
+            </div>
 
-        </section>
-
-
-        <!-- Back Button -->
-        <div style="text-align: center; margin: 30px 0;">
-
-            <a href="{{ url_for('dashboard') }}"
-               class="sp-home-btn">
-
-                ← Back to Dashboard
-
-            </a>
+            {% endfor %}
 
         </div>
-
-
-        <!-- Footer -->
-        <footer class="sp-footer">
-
-            <p>© 2026 StudyPilot</p>
-
-            <span>Learn Every Day · Grow Every Day 🚀</span>
-
-        </footer>
-
-    </main>
-
+    </div>
 </body>
 </html>
