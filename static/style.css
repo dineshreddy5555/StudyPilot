@@ -1,583 +1,945 @@
-/* =====================================================
-   STUDYPILOT - PROFESSIONAL STUDENT DASHBOARD
-   File: static/style.css
-===================================================== */
+/* ========================================
+   STUDYPILOT - GLOBAL DESIGN
+======================================== */
 
-
-/* =====================================================
-   1. GLOBAL SETTINGS
-===================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
     --primary: #635bff;
-    --primary-dark: #5146e5;
-    --primary-light: #eeedff;
-
-    --secondary: #8b5cf6;
-    --blue: #3b82f6;
-    --green: #10b981;
-    --orange: #f59e0b;
-    --pink: #ec4899;
-    --cyan: #06b6d4;
-
-    --background: #f7f8fc;
+    --primary-dark: #5046e5;
+    --background: #f5f7ff;
     --surface: #ffffff;
-
-    --text-primary: #202443;
-    --text-secondary: #777d96;
-    --border: #ececf5;
-
-    --shadow-sm: 0 4px 14px rgba(40, 40, 90, 0.05);
-    --shadow-md: 0 12px 30px rgba(40, 40, 90, 0.09);
-    --shadow-lg: 0 18px 45px rgba(40, 40, 90, 0.12);
-
-    --radius-sm: 10px;
-    --radius-md: 16px;
-    --radius-lg: 22px;
-    --radius-xl: 28px;
-
-    --transition: 0.25s ease;
+    --text: #202443;
+    --muted: #737995;
+    --border: #e6e8f2;
+    --success: #16a36a;
+    --danger: #e34d59;
+    --shadow: 0 12px 35px rgba(37, 42, 80, 0.08);
 }
 
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
 }
 
 html {
     scroll-behavior: smooth;
-    scroll-padding-top: 90px;
 }
 
 body {
-    font-family:
-        "Inter",
-        "Segoe UI",
-        Roboto,
-        Arial,
-        sans-serif;
-
+    margin: 0;
+    min-height: 100vh;
+    padding: 0;
     background: var(--background);
-    color: var(--text-primary);
-
-    font-size: 15px;
+    color: var(--text);
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 16px;
     line-height: 1.6;
-
-    -webkit-font-smoothing: antialiased;
 }
 
-button,
+/* ========================================
+   CENTERED PAGE LAYOUT
+======================================== */
+
+body > header {
+    width: 100%;
+    text-align: center;
+    padding: 35px 20px 15px;
+}
+
+body > header h1 {
+    margin: 0 0 8px;
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+body > header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 16px;
+}
+
+main,
+.container {
+    width: min(100% - 32px, 1000px);
+    margin: 25px auto 60px;
+}
+
+/* Center pages that do not have a special dashboard layout */
+body > main.container {
+    max-width: 900px;
+}
+
+/* ========================================
+   HEADINGS
+======================================== */
+
+h1,
+h2,
+h3,
+h4 {
+    color: var(--text);
+    line-height: 1.25;
+}
+
+main h1,
+.container h1 {
+    margin-top: 0;
+    font-size: clamp(28px, 5vw, 38px);
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    text-align: center;
+}
+
+main h2,
+.container h2 {
+    margin-top: 30px;
+    margin-bottom: 18px;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+main > p,
+.container > p {
+    color: var(--muted);
+}
+
+/* ========================================
+   CARDS
+======================================== */
+
+.card {
+    margin: 18px auto;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    overflow-wrap: anywhere;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 38px rgba(37, 42, 80, 0.12);
+}
+
+.card h2,
+.card h3 {
+    margin-top: 0;
+}
+
+.card p {
+    color: var(--muted);
+}
+
+/* ========================================
+   FORMS AND INPUTS
+======================================== */
+
+form {
+    margin: 18px 0 28px;
+}
+
 input,
-textarea,
-select {
+select,
+textarea {
+    width: 100%;
+    min-height: 48px;
+    margin: 6px 0 12px;
+    padding: 12px 14px;
+    background: #ffffff;
+    color: var(--text);
+    border: 1px solid #d9ddec;
+    border-radius: 10px;
+    outline: none;
     font: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.12);
+}
+
+textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+/* Keep form fields comfortable on phones */
+form input[type="text"],
+form input[type="date"],
+form input[type="time"],
+form select {
+    max-width: 100%;
+}
+
+/* ========================================
+   BUTTONS
+======================================== */
 
 button,
-a {
-    -webkit-tap-highlight-color: transparent;
-}
-
-a {
-    color: inherit;
-}
-
-button {
+.btn,
+.sp-primary-btn,
+.sp-home-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 11px 20px;
+    border: none;
+    border-radius: 10px;
+    background: var(--primary);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
     cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 
-img {
-    max-width: 100%;
-    display: block;
+button:hover,
+.btn:hover,
+.sp-primary-btn:hover,
+.sp-home-btn:hover {
+    background: var(--primary-dark);
+    color: #ffffff;
+    transform: translateY(-1px);
 }
 
-::selection {
-    background: #dcd9ff;
-    color: #312e81;
+button:focus-visible,
+a:focus-visible {
+    outline: 3px solid rgba(99, 91, 255, 0.35);
+    outline-offset: 3px;
 }
 
+.delete-btn {
+    background: var(--danger);
+}
 
-/* =====================================================
-   2. DASHBOARD BACKGROUND
-===================================================== */
+.delete-btn:hover {
+    background: #c93643;
+}
+
+/* ========================================
+   LINKS
+======================================== */
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+/* ========================================
+   TASKS, SUBJECTS AND SCHEDULE ITEMS
+======================================== */
+
+.task,
+.subject,
+.session,
+.schedule-item {
+    margin: 15px 0;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(37, 42, 80, 0.05);
+}
+
+.task h3,
+.subject h3,
+.session h3,
+.schedule-item h3 {
+    margin-top: 0;
+}
+
+/* ========================================
+   DASHBOARD LAYOUT
+======================================== */
 
 .sp-dashboard {
-    min-height: 100vh;
-    background:
-        radial-gradient(
-            circle at 10% 0%,
-            rgba(99, 91, 255, 0.055),
-            transparent 28%
-        ),
-        radial-gradient(
-            circle at 100% 20%,
-            rgba(139, 92, 246, 0.045),
-            transparent 25%
-        ),
-        var(--background);
+    background: var(--background);
 }
 
-
-/* =====================================================
-   3. NAVIGATION BAR
-===================================================== */
-
 .sp-navbar {
-    width: 100%;
-    min-height: 76px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 20px;
-    padding: 15px 7%;
-
-    background: rgba(255, 255, 255, 0.94);
-    border-bottom: 1px solid var(--border);
-
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-
     position: sticky;
     top: 0;
     z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 16px max(24px, calc((100% - 1120px) / 2));
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
 }
 
 .sp-brand {
     display: inline-flex;
     align-items: center;
-    gap: 11px;
-
-    color: var(--text-primary);
-    text-decoration: none;
-
+    gap: 10px;
+    color: var(--text);
     font-size: 24px;
     font-weight: 800;
-    /* ==========================================
-   STUDYPILOT DASHBOARD - CENTER ALIGNMENT FIX
-========================================== */
-
-/* Main page */
-.sp-dashboard {
-    width: 100%;
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    background: #f5f6fc;
+    text-decoration: none;
 }
 
-/* Navigation */
-.sp-navbar {
-    width: 100%;
-    min-height: 75px;
-    padding: 15px 6%;
+.sp-brand:hover {
+    text-decoration: none;
+}
+
+.sp-brand-icon {
+    font-size: 30px;
+}
+
+.sp-brand-highlight {
+    color: var(--primary);
+}
+
+.sp-nav-actions {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    background: #ffffff;
-    border-bottom: 1px solid #e8e9f2;
-    box-sizing: border-box;
+    gap: 15px;
 }
 
-/* Center all dashboard content */
+.sp-nav-label {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
 .sp-container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 35px 0;
-    box-sizing: border-box;
+    width: min(1120px, calc(100% - 40px));
+    margin: 35px auto 50px;
 }
 
-/* Welcome banner */
 .sp-hero {
-    width: 100%;
-    min-height: 280px;
-    margin: 0 auto 30px;
-    padding: 40px;
-    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 30px;
-    border-radius: 24px;
-    background: linear-gradient(120deg, #635bff, #9675f5);
-    color: white;
+    gap: 35px;
+    min-height: 300px;
+    padding: 42px;
+    overflow: hidden;
+    background: linear-gradient(120deg, #eeedff, #f8f6ff 65%, #e8f5ff);
+    border: 1px solid #e8e5ff;
+    border-radius: 26px;
 }
 
-/* Hero text */
 .sp-hero-content {
-    width: 65%;
-    max-width: 650px;
+    flex: 1;
+    max-width: 600px;
+}
+
+.sp-eyebrow {
+    display: inline-block;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
 }
 
 .sp-hero h1 {
-    font-size: clamp(30px, 4vw, 46px);
-    line-height: 1.2;
-    margin: 12px 0 18px;
+    margin: 15px 0;
+    text-align: left;
+    font-size: clamp(34px, 5vw, 54px);
+    line-height: 1.12;
+    letter-spacing: -1.8px;
 }
 
 .sp-hero p {
-    line-height: 1.8;
-    margin-bottom: 24px;
+    max-width: 560px;
+    color: var(--muted);
+    font-size: 16px;
 }
 
-/* Statistics cards */
+.sp-hero-illustration {
+    position: relative;
+    display: grid;
+    flex: 0 0 220px;
+    min-height: 200px;
+    place-items: center;
+}
+
+.sp-illustration-circle {
+    display: grid;
+    width: 165px;
+    height: 165px;
+    place-items: center;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 15px 40px rgba(99, 91, 255, 0.15);
+}
+
+.sp-illustration-circle span {
+    font-size: 78px;
+}
+
+.sp-floating-icon {
+    position: absolute;
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    font-size: 24px;
+}
+
+.sp-float-one {
+    top: 5px;
+    left: 5px;
+}
+
+.sp-float-two {
+    top: 20px;
+    right: 5px;
+}
+
+.sp-float-three {
+    right: 10px;
+    bottom: 5px;
+}
+
 .sp-stats {
-    width: 100%;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 22px;
-    margin: 30px 0;
+    gap: 20px;
+    margin: 28px 0 35px;
 }
 
 .sp-stat-card {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 24px;
+    gap: 18px;
+    padding: 23px;
     background: #ffffff;
-    border: 1px solid #e9eaf3;
+    border: 1px solid var(--border);
     border-radius: 18px;
-    box-shadow: 0 5px 18px rgba(30, 30, 80, 0.05);
+    box-shadow: 0 6px 22px rgba(37, 42, 80, 0.04);
 }
 
-/* Study overview */
+.sp-stat-icon {
+    display: grid;
+    flex-shrink: 0;
+    width: 55px;
+    height: 55px;
+    place-items: center;
+    border-radius: 16px;
+    font-size: 25px;
+}
+
+.sp-icon-purple {
+    background: #efedff;
+}
+
+.sp-icon-blue {
+    background: #e8f2ff;
+}
+
+.sp-icon-green {
+    background: #e4f9ed;
+}
+
+.sp-stat-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.sp-stat-card h2 {
+    margin: 5px 0;
+    font-size: 27px;
+}
+
+.sp-stat-card span {
+    color: var(--muted);
+    font-size: 11px;
+}
+
 .sp-overview {
-    width: 100%;
-    margin: 30px auto 45px;
-    padding: 28px;
-    box-sizing: border-box;
+    margin-bottom: 38px;
+    padding: 26px;
     background: #ffffff;
-    border: 1px solid #e9eaf3;
+    border: 1px solid var(--border);
     border-radius: 20px;
+    box-shadow: 0 6px 22px rgba(37, 42, 80, 0.04);
 }
 
-/* Center the feature heading */
-.sp-section-heading {
-    width: 100%;
-    margin: 0 auto 30px;
-    text-align: center;
+.sp-overview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-.sp-section-heading .sp-eyebrow {
-    color: #635bff;
+.sp-overview-header h3 {
+    margin: 0;
 }
 
-.sp-section-heading h2 {
-    margin: 8px 0 10px;
-    font-size: clamp(25px, 3vw, 34px);
-    color: #202443;
+.sp-overview-header span,
+.sp-overview-item p,
+.sp-overview-item small {
+    color: var(--muted);
 }
 
-.sp-section-heading p {
-    color: #777d96;
+.sp-overview-header span,
+.sp-overview-item p,
+.sp-overview-item small {
+    font-size: 13px;
 }
 
-/* Six features in a centered grid */
-.sp-feature-grid {
-    width: 100%;
-    margin: 0 auto 40px;
+.sp-overview-stats {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 25px;
-    align-items: stretch;
+    margin-top: 24px;
 }
 
-/* Feature cards */
-.sp-feature-card {
+.sp-overview-item h3 {
+    margin: 5px 0;
+    font-size: 27px;
+}
+
+.sp-overview-item p {
+    margin: 0;
+}
+
+.sp-overview-item small {
+    display: block;
+    margin-top: 7px;
+}
+
+.sp-progress-track {
     width: 100%;
-    min-width: 0;
-    min-height: 245px;
-    padding: 25px;
-    box-sizing: border-box;
+    height: 8px;
+    margin-top: 12px;
+    overflow: hidden;
+    background: #ececf5;
+    border-radius: 20px;
+}
+
+.sp-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #9c70f7);
+    border-radius: 20px;
+}
+
+.sp-section-heading {
+    margin: 45px 0 25px;
+    text-align: center;
+}
+
+.sp-section-heading h2 {
+    margin: 10px 0;
+    font-size: clamp(26px, 4vw, 35px);
+}
+
+.sp-section-heading p {
+    color: var(--muted);
+}
+
+.sp-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.sp-feature-card {
     display: flex;
     flex-direction: column;
+    min-height: 250px;
+    padding: 25px;
     background: #ffffff;
-    border: 1px solid #e8e9f3;
+    border: 1px solid var(--border);
     border-radius: 20px;
-    box-shadow: 0 5px 20px rgba(30, 30, 80, 0.05);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 7px 25px rgba(37, 42, 80, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .sp-feature-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 14px 30px rgba(70, 60, 150, 0.12);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
 }
 
 .sp-feature-top {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+    align-items: center;
 }
 
-/* Feature icon backgrounds */
 .sp-feature-icon {
-    width: 55px;
-    height: 55px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    width: 53px;
+    height: 53px;
+    place-items: center;
     border-radius: 16px;
-    font-size: 26px;
+    font-size: 25px;
 }
 
 .sp-feature-purple {
-    background: #eeedff;
+    background: #efedff;
 }
 
 .sp-feature-blue {
-    background: #e6f1ff;
+    background: #e8f2ff;
 }
 
 .sp-feature-green {
-    background: #e2f9ef;
+    background: #e4f9ed;
 }
 
 .sp-feature-orange {
-    background: #fff2df;
+    background: #fff0df;
 }
 
 .sp-feature-pink {
-    background: #ffe8f3;
+    background: #ffeaf2;
 }
 
 .sp-feature-cyan {
-    background: #ddf8fc;
+    background: #e3f9fb;
 }
 
-/* Feature titles and descriptions */
+.sp-feature-number {
+    color: #b0b4c7;
+    font-size: 13px;
+    font-weight: 700;
+}
+
 .sp-feature-card h3 {
-    margin: 0 0 10px;
-    color: #202443;
-    font-size: 18px;
-    line-height: 1.5;
+    margin: 20px 0 8px;
+    font-size: 19px;
 }
 
 .sp-feature-card p {
+    flex-grow: 1;
     margin: 0 0 20px;
-    color: #777d96;
+    color: var(--muted);
     font-size: 14px;
-    line-height: 1.8;
 }
 
 .sp-feature-link {
-    display: inline-flex;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    margin-top: auto;
-    color: #635bff;
-    font-size: 14px;
-    font-weight: 700;
-    text-decoration: none;
+    gap: 10px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
 }
 
-.sp-feature-link:hover {
-    color: #5146e5;
-}
-
-/* Motivation banner */
 .sp-motivation {
-    width: 100%;
-    margin: 35px auto;
-    padding: 25px;
-    box-sizing: border-box;
     display: flex;
     align-items: center;
     gap: 18px;
-    background: #eeedff;
-    border: 1px solid #dedbff;
-    border-radius: 20px;
+    margin-top: 35px;
+    padding: 25px;
+    background: linear-gradient(110deg, #eeedff, #f5f3ff);
+    border: 1px solid #e7e3ff;
+    border-radius: 18px;
 }
 
-/* Footer */
-.sp-footer {
-    width: 100%;
-    margin
-    /* ==========================================
-   STUDYPILOT - ALL PAGES DESIGN FIX
-========================================== */
-
-/* General page layout */
-.page-container,
-.page-wrapper,
-.sp-page {
-    width: min(100% - 32px, 1000px);
-    margin: 40px auto;
-    padding: 32px;
-    background: #ffffff;
-    border: 1px solid #e9eaf3;
-    border-radius: 22px;
-    box-shadow: 0 8px 30px rgba(35, 35, 80, 0.06);
+.sp-motivation-icon {
+    font-size: 35px;
 }
 
-/* Page headings */
-.page-container h1,
-.page-wrapper h1,
-.sp-page h1 {
-    margin-bottom: 12px;
-    color: #202443;
-    font-family: "Segoe UI", Arial, sans-serif;
-    font-size: clamp(28px, 4vw, 38px);
-    line-height: 1.3;
-    text-align: center;
+.sp-motivation h3 {
+    margin: 0 0 5px;
 }
 
-.page-container h2,
-.page-wrapper h2,
-.sp-page h2 {
-    margin: 28px 0 16px;
-    color: #202443;
-    font-family: "Segoe UI", Arial, sans-serif;
-    font-size: 23px;
-}
-
-.page-container p,
-.page-wrapper p,
-.sp-page p {
-    color: #777d96;
-    font-family: "Segoe UI", Arial, sans-serif;
-    line-height: 1.8;
-}
-
-/* Forms */
-.page-container form,
-.page-wrapper form,
-.sp-page form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: center;
-    margin: 20px 0;
-}
-
-.page-container input,
-.page-wrapper input,
-.sp-page input,
-.page-container select,
-.page-wrapper select,
-.sp-page select {
-    flex: 1 1 200px;
-    width: auto;
-    min-width: 0;
-    padding: 13px 15px;
-    border: 1px solid #dfe1ee;
-    border-radius: 11px;
-    background: #fbfbff;
-    color: #202443;
-    font-family: "Segoe UI", Arial, sans-serif;
-    font-size: 15px;
-}
-
-.page-container button,
-.page-wrapper button,
-.sp-page button {
-    padding: 13px 20px;
-    border: none;
-    border-radius: 11px;
-    background: #635bff;
-    color: #ffffff;
-    font-family: "Segoe UI", Arial, sans-serif;
+.sp-motivation p {
+    margin: 0;
+    color: var(--muted);
     font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.2s ease;
 }
 
-.page-container button:hover,
-.page-wrapper button:hover,
-.sp-page button:hover {
-    background: #5146e5;
-    transform: translateY(-1px);
+.sp-motivation-star {
+    margin-left: auto;
+    color: var(--primary);
+    font-size: 35px;
 }
 
-/* Links */
-.page-container a,
-.page-wrapper a,
-.sp-page a {
-    color: #635bff;
-    font-family: "Segoe UI", Arial, sans-serif;
-    font-weight: 600;
-    text-decoration: none;
+.sp-footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 35px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
 }
 
-.page-container a:hover,
-.page-wrapper a:hover,
-.sp-page a:hover {
-    text-decoration: underline;
+.sp-footer p {
+    margin: 0;
 }
 
-/* Lists and content cards */
-.page-container li,
-.page-wrapper li,
-.sp-page li {
-    margin-bottom: 12px;
-    padding: 14px 16px;
-    border: 1px solid #ececf5;
+/* ========================================
+   COURSES
+======================================== */
+
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.course-card {
+    padding: 25px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+}
+
+.course-card h2 {
+    margin-top: 0;
+}
+
+/* ========================================
+   TABLES
+======================================== */
+
+table {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+    background: #ffffff;
     border-radius: 12px;
-    background: #fafaff;
-    color: #424761;
-    line-height: 1.7;
+    overflow: hidden;
 }
 
-/* Back to dashboard */
-.back-dashboard {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 25px;
-    padding: 11px 16px;
-    border-radius: 10px;
-    background: #eeedff;
-    color: #5146e5;
+th,
+td {
+    padding: 14px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
 }
 
-/* Mobile layout */
+th {
+    background: #efedff;
+    font-weight: 700;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+======================================== */
+
+@media (max-width: 850px) {
+    .sp-hero {
+        padding: 30px;
+    }
+
+    .sp-hero-illustration {
+        flex-basis: 160px;
+    }
+
+    .sp-illustration-circle {
+        width: 130px;
+        height: 130px;
+    }
+
+    .sp-illustration-circle span {
+        font-size: 60px;
+    }
+
+    .sp-feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sp-stats {
+        gap: 12px;
+    }
+
+    .sp-stat-card {
+        padding: 16px;
+        gap: 12px;
+    }
+}
+
 @media (max-width: 600px) {
-    .page-container,
-    .page-wrapper,
-    .sp-page {
-        width: calc(100% - 24px);
-        margin: 16px auto;
-        padding: 20px 16px;
-        border-radius: 16px;
+    body > header {
+        padding: 28px 16px 10px;
     }
 
-    .page-container h1,
-    .page-wrapper h1,
-    .sp-page h1 {
-        font-size: 27px;
+    main,
+    .container {
+        width: calc(100% - 28px);
+        margin: 20px auto 40px;
     }
 
-    .page-container h2,
-    .page-wrapper h2,
-    .sp-page h2 {
+    body > main.container {
+        width: calc(100% - 28px);
+    }
+
+    main h1,
+    .container h1 {
+        text-align: center;
+    }
+
+    main h2,
+    .container h2 {
         font-size: 21px;
     }
 
-    .page-container form,
-    .page-wrapper form,
-    .sp-page form {
+    .sp-navbar {
+        padding: 13px 16px;
+    }
+
+    .sp-brand {
+        font-size: 20px;
+    }
+
+    .sp-brand-icon {
+        font-size: 25px;
+    }
+
+    .sp-nav-label {
+        display: none;
+    }
+
+    .sp-home-btn {
+        min-height: 38px;
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+
+    .sp-container {
+        width: calc(100% - 28px);
+        margin: 22px auto 35px;
+    }
+
+    .sp-hero {
         flex-direction: column;
-        align-items: stretch;
+        align-items: center;
+        gap: 20px;
+        padding: 28px 20px;
+        text-align: center;
     }
 
-    .page-container input,
-    .page-wrapper input,
-    .sp-page input,
-    .page-container select,
-    .page-wrapper select,
-    .sp-page select {
+    .sp-hero-content {
         width: 100%;
-        flex: auto;
     }
 
-    .page-container button,
-    .page-wrapper button,
-    .sp-page button {
+    .sp-hero h1 {
+        font-size: 36px;
+        text-align: center;
+    }
+
+    .sp-hero p {
+        font-size: 14px;
+    }
+
+    .sp-hero-illustration {
+        min-height: 150px;
         width: 100%;
+        flex-basis: auto;
+    }
+
+    .sp-illustration-circle {
+        width: 120px;
+        height: 120px;
+    }
+
+    .sp-illustration-circle span {
+        font-size: 55px;
+    }
+
+    .sp-stats {
+        grid-template-columns: 1fr;
+        gap: 13px;
+        margin: 20px 0 28px;
+    }
+
+    .sp-stat-card {
+        padding: 18px;
+    }
+
+    .sp-overview {
+        padding: 20px;
+    }
+
+    .sp-overview-stats {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+
+    .sp-feature-grid,
+    .course-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sp-feature-card {
+        min-height: auto;
+        padding: 22px;
+    }
+
+    .sp-motivation {
+        align-items: flex-start;
+        padding: 20px;
+    }
+
+    .sp-motivation-star {
+        display: none;
+    }
+
+    .sp-footer {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    /* Center and wrap form controls on mobile */
+    form {
+        width: 100%;
+    }
+
+    input,
+    select,
+    textarea {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    button,
+    .btn {
+        max-width: 100%;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
     }
 }

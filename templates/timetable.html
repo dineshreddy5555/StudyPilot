@@ -4,70 +4,176 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Study Timetable - Study Pilot</title>
+    <title>Study Timetable - StudyPilot</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f4f6fc;
+            font-family: Arial, sans-serif;
+            color: #202443;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        h1, h2 {
+            color: #282b52;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d5d9e8;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: #635bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #4b43db;
+        }
+
+        .session-card {
+            margin-top: 18px;
+            padding: 20px;
+            background: #f8f8ff;
+            border: 1px solid #e3e5f5;
+            border-radius: 12px;
+        }
+
+        .error {
+            padding: 12px;
+            background: #ffe8e8;
+            color: #b00020;
+            border-radius: 8px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #635bff;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px auto;
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-    <header>
-        <h1>📅 Study Timetable</h1>
-        <p>Plan your learning schedule</p>
-    </header>
+<main class="container">
 
-    <main>
-        <h2>Add Study Session</h2>
+    <h1>📅 Study Timetable</h1>
+    <p>Plan your learning schedule.</p>
 
-        <form method="POST" action="/timetable">
+    <h2>Add Study Session</h2>
 
-            <input
-                type="text"
-                name="subject"
-                placeholder="Enter subject name"
-                required
-            >
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
 
-            <label for="study_date">Date:</label>
-            <input
-                type="date"
-                id="study_date"
-                name="study_date"
-                required
-            >
+    <form method="POST" action="{{ url_for('timetable') }}">
 
-            <label for="study_time">Time:</label>
-            <input
-                type="time"
-                id="study_time"
-                name="study_time"
-                required
-            >
+        <div class="form-group">
+            <label for="subject">Subject Name</label>
+            <input type="text"
+                   id="subject"
+                   name="subject"
+                   placeholder="Enter subject name"
+                   required>
+        </div>
 
-            <button type="submit">Add Session</button>
+        <div class="form-group">
+            <label for="study_date">Study Date</label>
+            <input type="date"
+                   id="study_date"
+                   name="study_date"
+                   required>
+        </div>
 
-        </form>
+        <div class="form-group">
+            <label for="study_time">Study Time</label>
+            <input type="time"
+                   id="study_time"
+                   name="study_time"
+                   required>
+        </div>
 
-        <h2>Your Study Schedule</h2>
+        <button type="submit">➕ Add Session</button>
 
-        {% if sessions %}
-            {% for session in sessions %}
-                <div class="card">
-                    <h3>{{ session.subject }}</h3>
-                    <p>Date: {{ session.date }}</p>
-                    <p>Time: {{ session.time }}</p>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No study sessions added yet.</p>
-        {% endif %}
+    </form>
 
-        <a href="/dashboard" class="back-link">
-            ← Back to Dashboard
-        </a>
+    <h2>Your Study Schedule</h2>
 
-    </main>
+    {% if sessions %}
+
+        {% for session in sessions %}
+
+            <div class="session-card">
+
+                <h3>📘 {{ session['subject'] }}</h3>
+
+                <p>
+                    <strong>📅 Date:</strong>
+                    {{ session['study_date'] or 'Not provided' }}
+                </p>
+
+                <p>
+                    <strong>🕒 Time:</strong>
+                    {{ session['study_time'] or 'Not provided' }}
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>No study sessions yet. Add your first session!</p>
+
+    {% endif %}
+
+    <a href="{{ url_for('dashboard') }}" class="back-link">
+        ← Back to Dashboard
+    </a>
+
+</main>
 
 </body>
 </html>
