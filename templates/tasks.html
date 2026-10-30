@@ -21,7 +21,6 @@
 
         <h2>Add a New Task</h2>
 
-        <!-- Form to add a new task -->
         <form method="POST" action="{{ url_for('tasks') }}">
 
             <input
@@ -38,7 +37,6 @@
 
         <h2>My Tasks</h2>
 
-        <!-- Display all tasks -->
         {% if tasks %}
 
             {% for task in tasks %}
@@ -61,7 +59,7 @@
 
                     </span>
 
-                    <!-- Mark task as completed -->
+                    <!-- Mark Completed -->
                     {% if not task['completed'] %}
 
                         <form method="POST"
@@ -73,9 +71,23 @@
 
                         </form>
 
+                    {% else %}
+
+                        <!-- Undo Completed -->
+
+                        <form method="POST"
+                              action="{{ url_for('undo_task', task_id=task['id']) }}">
+
+                            <button type="submit">
+                                ↩ Undo
+                            </button>
+
+                        </form>
+
                     {% endif %}
 
-                    <!-- Delete task -->
+                    <!-- Delete Task -->
+
                     <form method="POST"
                           action="{{ url_for('delete_task', task_id=task['id']) }}">
 
